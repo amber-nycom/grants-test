@@ -266,17 +266,6 @@
       "manual": true
     },
     {
-      "id": "hcr-cdbg",
-      "title": "Community Development Block Grant (CDBG)",
-      "agency": "NYS Homes & Community Renewal",
-      "status": "Unknown",
-      "dueDate": "",
-      "description": "Federal funding for cities, towns, villages and counties to assist low- and moderate-income communities. 2026 CFA round referenced as open on HCR's site, but no confirmed application deadline was posted as of last check — verify before publishing a status.",
-      "link": "https://hcr.ny.gov/community-development-block-grant",
-      "source": "HCR",
-      "manual": true
-    },
-    {
       "id": "hcr-nys-home",
       "title": "NYS HOME Program",
       "agency": "NYS Homes & Community Renewal",
@@ -284,17 +273,6 @@
       "dueDate": "September 17, 2026 4:00 PM",
       "description": "Funding for affordable housing development, down payment assistance, and rehabilitation for municipalities and nonprofits. 2026 Local Funding Round is open via CDOL.",
       "link": "https://hcr.ny.gov/community-development-block-grant#funding-round-materials",
-      "source": "HCR",
-      "manual": true
-    },
-    {
-      "id": "hcr-pro-housing",
-      "title": "Pro-Housing Community Program",
-      "agency": "NYS Homes & Community Renewal",
-      "status": "Unknown",
-      "dueDate": "",
-      "description": "Certified localities gain access to discretionary State funding. Current active status unconfirmed — verify before publishing.",
-      "link": "https://hcr.ny.gov/pro-housing-community-program",
       "source": "HCR",
       "manual": true
     }
