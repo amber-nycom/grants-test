@@ -235,6 +235,18 @@ async function scrapeParks(browserPage) {
     const result = await browserPage.evaluate(() => {
       const main = document.querySelector('main, #main, #main-content, [role="main"], article') || document.body;
 
+      // Bot-block / wrong-page diagnostics — if these come back empty or
+      // suspicious (e.g. a challenge/interstitial title), the page Puppeteer
+      // received isn't the real one, regardless of what our parsing logic does.
+      const pageDebug = {
+        title: document.title,
+        url: window.location.href,
+        bodyTextLength: (document.body.innerText || '').length,
+        bodyTextPreview: (document.body.innerText || '').slice(0, 300),
+        totalLinksInDoc: document.querySelectorAll('a').length,
+        totalTablesInDoc: document.querySelectorAll('table').length,
+      };
+
       // ── 1. Parse the "Open Grant Opportunities" table for real dates ──
       const tableRows = [];
       const table = Array.from(main.querySelectorAll('table')).find(t => {
@@ -300,6 +312,7 @@ async function scrapeParks(browserPage) {
         tableRows,
         programs,
         debug: {
+          page: pageDebug,
           tableFound: !!table,
           tableRowCount: tableRows.length,
           totalGrantLinksFound: grantLinks.length,
