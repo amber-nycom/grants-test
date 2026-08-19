@@ -214,206 +214,6 @@ async function scrapeEFC() {
   }
 }
 
-// ── NYS PARKS ────────────────────────────────────────────────
-// parks.ny.gov/grants is a single aggregator page that publishes real,
-// structured data for every program:
-//   1. An "Open Grant Opportunities" table with actual Opens/Deadline dates
-//   2. A per-program "Opportunity Status: Open/Closed" label under each
-//      program's listing in the "State Funded" and "Federally Funded" sections
-// We read both directly from that page instead of guessing at a hardcoded
-// list — no dates or open/closed flags are ever typed in by hand here, and
-// nothing needs to be remembered or revised as programs open/close each year.
-// If a program's status genuinely can't be determined, we leave it blank
-// (status: 'Unknown') rather than assume Open or Closed — the dashboard's
-// front-end fallback should never promote a blank into "Rolling."
-async function scrapeParks(browserPage) {
-  console.log('Scraping NYS Parks...');
-  try {
-    await browserPage.goto('https://parks.ny.gov/grants', { waitUntil: 'networkidle0', timeout: 30000 });
-    await new Promise(r => setTimeout(r, 1500));
-
-    const result = await browserPage.evaluate(() => {
-      const main = document.querySelector('main, #main, #main-content, [role="main"], article') || document.body;
-
-      // Bot-block / wrong-page diagnostics — if these come back empty or
-      // suspicious (e.g. a challenge/interstitial title), the page Puppeteer
-      // received isn't the real one, regardless of what our parsing logic does.
-      const pageDebug = {
-        title: document.title,
-        url: window.location.href,
-        bodyTextLength: (document.body.innerText || '').length,
-        bodyTextPreview: (document.body.innerText || '').slice(0, 300),
-        totalLinksInDoc: document.querySelectorAll('a').length,
-        totalTablesInDoc: document.querySelectorAll('table').length,
-      };
-
-      // ── 1. Parse the "Open Grant Opportunities" table for real dates ──
-      const tableRows = [];
-      const table = Array.from(main.querySelectorAll('table')).find(t => {
-        const headerText = (t.querySelector('tr')?.innerText || '').toLowerCase();
-        return headerText.includes('deadline') || headerText.includes('opens');
-      });
-      if (table) {
-        const rows = Array.from(table.querySelectorAll('tr')).slice(1); // skip header row
-        for (const row of rows) {
-          const cells = Array.from(row.querySelectorAll('td')).map(td => td.innerText.trim());
-          if (cells.length < 3) continue;
-          tableRows.push({
-            title: cells[0].replace(/\s+/g, ' ').trim(),
-            opens: cells[1] || '',
-            deadline: cells[2] || '',
-          });
-        }
-      }
-
-      // ── 2. Find every link to an individual grant page, then read its
-      //      surrounding block for "Opportunity Status" and description.
-      //      Going link-first (rather than assuming title/status/description
-      //      sit in separate sibling elements) is more resilient to whatever
-      //      block structure Drupal actually renders.
-      const seenHref = new Map();
-      const grantLinks = Array.from(main.querySelectorAll('a[href*="/grants/"]'));
-
-      for (const link of grantLinks) {
-        const title = (link.innerText || '').trim().replace(/\s+/g, ' ');
-        if (title.length < 5) continue;
-
-        // Climb to the nearest block-level container so we can read the
-        // full surrounding text (status + description usually live right
-        // alongside the title inside the same block).
-        let container = link.closest('p, div, li') || link.parentElement;
-        let text = (container?.innerText || '').trim();
-
-        // If that block is basically just the link text itself, the status/
-        // description text likely lives in the very next block instead.
-        if (text.length <= title.length + 5 && container?.nextElementSibling) {
-          text += ' ' + (container.nextElementSibling.innerText || '').trim();
-        }
-
-        const statusMatch = text.match(/Opportunity Status:\s*([A-Za-z ]+?)(?:\n|\.|$)/i);
-        const status = statusMatch ? statusMatch[1].trim() : '';
-        const description = text
-          .replace(title, '')
-          .replace(/Opportunity Status:\s*[A-Za-z ]+/i, '')
-          .trim();
-
-        // The same link often appears twice (once in the sidebar nav, once
-        // in the actual program listing) — keep whichever copy actually has
-        // a status/description, since the nav copy won't.
-        const existing = seenHref.get(link.href);
-        if (!existing || (!existing.status && status)) {
-          seenHref.set(link.href, { title, link: link.href, status, description });
-        }
-      }
-
-      const programs = Array.from(seenHref.values());
-
-      return {
-        tableRows,
-        programs,
-        debug: {
-          page: pageDebug,
-          tableFound: !!table,
-          tableRowCount: tableRows.length,
-          totalGrantLinksFound: grantLinks.length,
-          uniqueProgramsAfterDedup: programs.length,
-          sample: programs.slice(0, 3).map(p => ({ title: p.title, status: p.status, descPreview: p.description.slice(0, 80) })),
-        },
-      };
-    });
-
-    console.log('  Parks debug: ' + JSON.stringify(result.debug, null, 2));
-
-    // Normalize table titles for fuzzy matching against program titles
-    const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-
-    const grants = result.programs
-      .filter(p => p.title && p.link && p.link.includes('parks.ny.gov'))
-      .filter(p => !/^(grants?|get involved)$/i.test(p.title))
-      .map(p => {
-        const tableMatch = result.tableRows.find(t => {
-          const nt = norm(t.title), np = norm(p.title);
-          return nt.includes(np) || np.includes(nt);
-        });
-
-        const statusRaw = (p.status || '').toLowerCase();
-        let status = 'Unknown';
-        if (statusRaw.includes('closed')) status = 'Closed';
-        else if (statusRaw.includes('open')) status = 'Available';
-        // "By Prior Approval" and anything else stays Unknown — there's no
-        // real application window to communicate, and we'd rather show
-        // nothing than assert Open/Closed incorrectly.
-
-        let dueDate = '';
-        if (tableMatch && tableMatch.deadline && !/rolling|ongoing|as funding/i.test(tableMatch.deadline)) {
-          dueDate = tableMatch.deadline.trim();
-        }
-        // A table entry is authoritative that the program is currently open,
-        // even if the per-program status label hasn't been updated yet.
-        if (tableMatch) status = 'Available';
-
-        return {
-          id: 'parks-' + p.title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 40),
-          title: p.title,
-          agency: 'NYS Office of Parks, Recreation & Historic Preservation',
-          status,
-          dueDate,
-          description: p.description ? p.description.slice(0, 300) : '',
-          link: p.link,
-          source: 'NYS Parks',
-        };
-      });
-
-    console.log('  Parks: ' + grants.length + ' programs found');
-    grants.forEach(g => console.log('    [' + g.status + '] ' + g.title + (g.dueDate ? ' · due ' + g.dueDate : '')));
-    return grants;
-  } catch (e) {
-    console.log('  Parks error: ' + e.message);
-    return [];
-  }
-}
-
-// ── HCR ──────────────────────────────────────────────────────
-// Scrapes municipal-facing HCR programs only (not individual grant-partners page)
-async function scrapeHCR() {
-  console.log('Scraping HCR...');
-  // These are the known active municipal/nonprofit programs from HCR
-  // The grant-partners page is for individuals only and is not appropriate here
-  const known = [
-    {
-      title: 'Community Development Block Grant (CDBG)',
-      link: 'https://hcr.ny.gov/community-development-block-grant',
-      description: 'Federal funding for cities, towns, villages and counties to assist low- and moderate-income communities.',
-    },
-    {
-      title: 'NYS HOME Program',
-      link: 'https://hcr.ny.gov/nys-home-program',
-      description: 'Funding for affordable housing development, down payment assistance, and rehabilitation for municipalities and nonprofits.',
-    },
-    {
-      title: 'Pro-Housing Community Program',
-      link: 'https://hcr.ny.gov/pro-housing-community-program',
-      description: 'Certified localities gain exclusive access to up to $750 million in discretionary State funding.',
-    },
-    {
-      title: 'Vacant Rental Program (VRP)',
-      link: 'https://hcr.ny.gov/vrp',
-      description: 'Grants to rehabilitate vacant and unusable housing units into quality affordable rental units.',
-    },
-  ];
-
-  return known.map(k => ({
-    id: 'hcr-' + k.title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30),
-    title: k.title,
-    agency: 'NYS Homes & Community Renewal',
-    status: 'Available',
-    dueDate: '',
-    description: k.description,
-    link: k.link,
-    source: 'HCR',
-  }));
-}
-
 // ── DASNY ─────────────────────────────────────────────────────
 async function scrapeDASNY(page) {
   console.log('Scraping DASNY...');
@@ -584,9 +384,14 @@ async function scrapeDEC() {
   await page.setViewport({ width: 1280, height: 900 });
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-  // Run static scrapers (EFC, HCR, DEC use https.get; Parks and DASNY need a real browser)
-  const [efc, hcr, dec] = await Promise.all([scrapeEFC(), scrapeHCR(), scrapeDEC()]);
-  const parks = await scrapeParks(page);
+  // NYS Parks and HCR are NOT scraped. Both sites sit behind Cloudflare's
+  // bot challenge on GitHub Actions runners, so any automated attempt either
+  // gets nothing or silently returns a generic "Available" for everything —
+  // exactly the kind of confidently-wrong data we don't want to show
+  // municipal officials. Parks and HCR grants are maintained entirely by
+  // hand as manual: true entries in agency-grants.json (see below) — the
+  // same mechanism already used for one-off manual additions.
+  const [efc, dec] = await Promise.all([scrapeEFC(), scrapeDEC()]);
   const dasny = await scrapeDASNY(page);
 
   // Deduplicate across all sources by title
@@ -598,22 +403,17 @@ async function scrapeDEC() {
     return true;
   });
   const efcDeduped = dedupe(efc);
-  const parksDeduped = dedupe(parks);
-  const hcrDeduped = dedupe(hcr);
   const decDeduped = dedupe(dec);
-  // Add dasny/parks titles to seen so NY PLAYS/BRICKS/SWIMS don't duplicate DASNY's
+  // Add dasny titles to seen so NY PLAYS/BRICKS/SWIMS don't duplicate DASNY's
   dasny.forEach(g => seenTitles.add(g.title.toLowerCase().trim()));
 
-  // Check status of EFC and HCR grants using Puppeteer (JS-rendered pages).
-  // Parks is no longer included here — scrapeParks() now reads its own
-  // authoritative status/deadline data directly off parks.ny.gov/grants.
+  // Check status of EFC grants using Puppeteer (JS-rendered pages).
   // EFC grants with dedicated pages (like WIIA) have their deadlines there, not on /apply.
   // Skip the generic /apply page itself since it won't have per-grant deadline info.
   const efcNeedsCheck = efcDeduped.filter(g => g.link && g.link.startsWith('http') && g.link !== 'https://efc.ny.gov/apply');
-  const needsCheck = [...efcNeedsCheck, ...hcrDeduped].filter(g => g.link && g.link.startsWith('http'));
-  console.log('\nChecking status of ' + needsCheck.length + ' EFC/HCR grants...');
+  console.log('\nChecking status of ' + efcNeedsCheck.length + ' EFC grants...');
   const statusMap = {};
-  for (const g of needsCheck) {
+  for (const g of efcNeedsCheck) {
     const result = await checkGrantStatus(page, g.link);
     statusMap[g.id] = result;
     if (result.status === 'Closed') console.log('  CLOSED: [' + g.source + '] ' + g.title);
@@ -624,16 +424,10 @@ async function scrapeDEC() {
       ? 'Closed' : checked.status || g.status;
     return { ...g, status: raw === 'Open' ? 'Available' : raw, dueDate: checked.dueDate || g.dueDate };
   });
-  const hcrChecked = hcrDeduped.map(g => {
-    const checked = statusMap[g.id] || {};
-    const raw = g.status === 'Closed' && checked.status !== 'Open'
-      ? 'Closed' : checked.status || g.status;
-    return { ...g, status: raw === 'Open' ? 'Available' : raw, dueDate: checked.dueDate || g.dueDate };
-  });
 
   await browser.close();
 
-  const scraped = [...efcChecked, ...parksDeduped, ...hcrChecked, ...dasny, ...decDeduped];
+  const scraped = [...efcChecked, ...dasny, ...decDeduped];
   console.log('\nTotal agency grants: ' + scraped.length);
   scraped.forEach(g => console.log(' [' + g.source + '] ' + g.title + (g.dueDate ? ' · ' + g.dueDate : '')));
 
@@ -643,14 +437,14 @@ async function scrapeDEC() {
     try {
       const existing = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
       manualGrants = (existing.grants || []).filter(g => g.manual === true);
-      console.log('Preserving ' + manualGrants.length + ' manual entries');
+      console.log('Preserving ' + manualGrants.length + ' manual entries (includes NYS Parks & HCR)');
     } catch(e) { console.log('Could not read existing file:', e.message); }
   }
 
   const allGrants = [...scraped, ...manualGrants];
   const output = {
     grants: allGrants, fetched: new Date().toISOString(), count: allGrants.length,
-    sources: { efc: efcChecked.length, parks: parks.length, hcr: hcr.length, dasny: dasny.length, dec: dec.length },
+    sources: { efc: efcChecked.length, dasny: dasny.length, dec: dec.length, manual: manualGrants.length },
   };
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
   console.log('Saved to agency-grants.json');
