@@ -254,52 +254,69 @@ async function scrapeParks(browserPage) {
         }
       }
 
-      // ── 2. Walk the program listings for title + link + Opportunity Status ──
-      const programs = [];
-      const blocks = Array.from(main.querySelectorAll('p, li, h3, h4'));
-      let current = null;
-      for (const el of blocks) {
-        const text = (el.innerText || '').trim();
-        if (!text) continue;
+      // ── 2. Find every link to an individual grant page, then read its
+      //      surrounding block for "Opportunity Status" and description.
+      //      Going link-first (rather than assuming title/status/description
+      //      sit in separate sibling elements) is more resilient to whatever
+      //      block structure Drupal actually renders.
+      const seenHref = new Map();
+      const grantLinks = Array.from(main.querySelectorAll('a[href*="/grants/"]'));
 
-        const link = el.querySelector('a[href]');
-        const statusMatch = text.match(/Opportunity Status:\s*([A-Za-z ]+)/i);
+      for (const link of grantLinks) {
+        const title = (link.innerText || '').trim().replace(/\s+/g, ' ');
+        if (title.length < 5) continue;
 
-        if (statusMatch && current) {
-          current.status = statusMatch[1].trim();
-          continue;
+        // Climb to the nearest block-level container so we can read the
+        // full surrounding text (status + description usually live right
+        // alongside the title inside the same block).
+        let container = link.closest('p, div, li') || link.parentElement;
+        let text = (container?.innerText || '').trim();
+
+        // If that block is basically just the link text itself, the status/
+        // description text likely lives in the very next block instead.
+        if (text.length <= title.length + 5 && container?.nextElementSibling) {
+          text += ' ' + (container.nextElementSibling.innerText || '').trim();
         }
 
-        // A short block containing a link and no "Opportunity Status" text
-        // is treated as a new program's title line.
-        if (link && text.length < 150 && !statusMatch) {
-          const title = link.innerText.trim().replace(/\s+/g, ' ');
-          if (title.length < 5) continue;
-          current = {
-            title,
-            link: link.href,
-            status: '',
-            description: '',
-          };
-          programs.push(current);
-          continue;
-        }
+        const statusMatch = text.match(/Opportunity Status:\s*([A-Za-z ]+?)(?:\n|\.|$)/i);
+        const status = statusMatch ? statusMatch[1].trim() : '';
+        const description = text
+          .replace(title, '')
+          .replace(/Opportunity Status:\s*[A-Za-z ]+/i, '')
+          .trim();
 
-        // Otherwise, treat as the description for the most recent program,
-        // as long as we haven't already captured one.
-        if (current && !current.description && text.length > 20 && text.length < 500) {
-          current.description = text;
+        // The same link often appears twice (once in the sidebar nav, once
+        // in the actual program listing) — keep whichever copy actually has
+        // a status/description, since the nav copy won't.
+        const existing = seenHref.get(link.href);
+        if (!existing || (!existing.status && status)) {
+          seenHref.set(link.href, { title, link: link.href, status, description });
         }
       }
 
-      return { tableRows, programs };
+      const programs = Array.from(seenHref.values());
+
+      return {
+        tableRows,
+        programs,
+        debug: {
+          tableFound: !!table,
+          tableRowCount: tableRows.length,
+          totalGrantLinksFound: grantLinks.length,
+          uniqueProgramsAfterDedup: programs.length,
+          sample: programs.slice(0, 3).map(p => ({ title: p.title, status: p.status, descPreview: p.description.slice(0, 80) })),
+        },
+      };
     });
+
+    console.log('  Parks debug: ' + JSON.stringify(result.debug, null, 2));
 
     // Normalize table titles for fuzzy matching against program titles
     const norm = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
     const grants = result.programs
       .filter(p => p.title && p.link && p.link.includes('parks.ny.gov'))
+      .filter(p => !/^(grants?|get involved)$/i.test(p.title))
       .map(p => {
         const tableMatch = result.tableRows.find(t => {
           const nt = norm(t.title), np = norm(p.title);
