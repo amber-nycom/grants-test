@@ -1,6 +1,215 @@
 {
-  "_comment": "Paste these objects into the 'grants' array in agency-grants.json. Each has manual: true so scrape-agency.js will preserve it on every future run. Status/dates below reflect what was on the live pages as of 2026-08-19 — verify and update before committing, especially dueDate values.",
   "grants": [
+    {
+      "id": "efc-clean-vessel-assistance-progra",
+      "title": "Clean Vessel Assistance Program",
+      "agency": "NYS Environmental Facilities Corporation",
+      "status": "Available",
+      "dueDate": "",
+      "description": "Reimbursement grants to marinas for the installation, renovation & replacement of pumpout stations.",
+      "link": "https://efc.ny.gov/clean-vessel",
+      "source": "EFC"
+    },
+    {
+      "id": "dec-municipal-waste-reduction--recycling",
+      "title": "Municipal Waste Reduction, Recycling",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Available",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/waste-management/grants",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-household-hazardous-waste-disposal",
+      "title": "Household Hazardous Waste Disposal",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Available",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/waste-management/grants/household-hazardous-waste-programs-grants",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-solid-waste-municipal-landfill-closure",
+      "title": "Solid Waste Municipal Landfill Closure",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Available",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/waste-management/grants/municipal-landfill-closure-projects",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-municipal-landfill-gas-management",
+      "title": "Municipal Landfill Gas Management",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Available",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/waste-management/grants/municipal-landfill-gas-management-projects",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-municipal-funding-for-food-scraps-recycl",
+      "title": "Municipal Funding for Food Scraps Recycling Initiatives",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/recycling-composting/organic-materials-management/funding-opportunities-for-organics-management",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-water-quality-improvement-project--wqip-",
+      "title": "Water Quality Improvement Project (WQIP) Program",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "July 31, 2026",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/get-involved/grant-applications/wqip-program",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-non-agricultural-nonpoint-source-and-ms4",
+      "title": "Non-Agricultural Nonpoint Source and MS4 Planning Grant (NPG)",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, OT",
+      "link": "https://dec.ny.gov/get-involved/grant-applications/non-agricultural-nonpoint-source-planning-ms4-mapping-grant",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-the-hudson-river-estuary",
+      "title": "The Hudson River Estuary",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/nature/waterbodies/oceans-estuaries/hudson-river-estuary-program/grants-funding-opportunities",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-brownfield-opportunity-areas---dos",
+      "title": "Brownfield Opportunity Areas - DOS",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Available",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP",
+      "link": "https://dos.ny.gov/brownfield-redevelopment",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-invasive-species-grant-program",
+      "title": "Invasive Species Grant Program",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/nature/invasive-species/invasive-species-grant-program",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-community-reforestation--core--grant",
+      "title": "Community Reforestation (CoRe) Grant",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/nature/forests-trees/urban-and-community-forestry/urban-and-community-forestry-grants",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-community-forest-conservation-grants",
+      "title": "Community Forest Conservation Grants",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/nature/open-space/community-forest-conservation-grant-program",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-adirondack-and-catskill-parks-community-",
+      "title": "Adirondack and Catskill Parks Community Smart Growth",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP",
+      "link": "https://dec.ny.gov/nature/open-space/smart-growth-in-adirondack-park-catskill-park",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-urban-and-community-forestry",
+      "title": "Urban and Community Forestry",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/nature/forests-trees/urban-and-community-forestry/managing-your-community-forest/urban-community-forestry-grants",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-volunteer-fire-assistance",
+      "title": "Volunteer Fire Assistance",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/environmental-protection/public-safety/volunteer-fire-capacity-grants",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-open-space-conservation-grant-program",
+      "title": "Open Space Conservation Grant Program",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "April 15",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/nature/open-space/open-space-conservation-grant",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-establishing-large-forests-reimbursement",
+      "title": "Establishing Large Forests Reimbursement Grant Program",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI, NFP, OT",
+      "link": "https://dec.ny.gov/nature/forests-trees/private-forest-management/establishing-large-forests-grant-program",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-municipal-zero-emission-vehicle--zev--cl",
+      "title": "Municipal Zero-Emission Vehicle (ZEV) Clean Vehicle Rebate Program",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/climate-change/resources-for-local-governments/grants-for-climate-action#Municipal",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-municipal-zero-emission-vehicle--zev--in",
+      "title": "Municipal Zero-Emission Vehicle (ZEV) Infrastructure Grant Program",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/climate-change/resources-for-local-governments/grants-for-climate-action#Municipal",
+      "source": "DEC"
+    },
+    {
+      "id": "dec-climate-smart-communities-grants",
+      "title": "Climate Smart Communities Grants",
+      "agency": "NYS Department of Environmental Conservation",
+      "status": "Closed",
+      "dueDate": "",
+      "eligibility": "MUNI",
+      "link": "https://dec.ny.gov/environmental-protection/climate-change/resources-for-local-governments/grants-for-climate-action",
+      "source": "DEC"
+    },
     {
       "id": "parks-connect-kids-to-parks-field-trip",
       "title": "Connect Kids to Parks Field Trip Grant Program",
@@ -89,5 +298,13 @@
       "source": "HCR",
       "manual": true
     }
-  ]
+  ],
+  "fetched": "2026-08-19T20:41:31.865Z",
+  "count": 29,
+  "sources": {
+    "efc": 1,
+    "dasny": 0,
+    "dec": 20,
+    "manual": 8
+  }
 }
