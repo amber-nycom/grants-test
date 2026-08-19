@@ -445,6 +445,14 @@ async function scrapeDEC() {
   const output = {
     grants: allGrants, fetched: new Date().toISOString(), count: allGrants.length,
     sources: { efc: efcChecked.length, dasny: dasny.length, dec: dec.length, manual: manualGrants.length },
+    // Plain metadata field, not part of "grants" — purely so it's obvious when
+    // scanning the raw file in GitHub where hand-maintained entries start.
+    // Lives outside the array on purpose: nothing reads or renders this key,
+    // so it needs zero filtering in index.html and can't ever show up on the
+    // dashboard by accident.
+    _manualEntriesNote: manualGrants.length
+      ? `Grants ${allGrants.length - manualGrants.length + 1}-${allGrants.length} in the array above (marked "manual": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped.`
+      : 'No manual entries currently present.',
   };
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
   console.log('Saved to agency-grants.json');
