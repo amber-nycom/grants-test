@@ -277,12 +277,13 @@
       "manual": true
     }
   ],
-  "fetched": "2026-08-19T20:41:31.865Z",
-  "count": 29,
+  "fetched": "2026-08-19T20:51:23.389Z",
+  "count": 27,
   "sources": {
     "efc": 1,
     "dasny": 0,
     "dec": 20,
-    "manual": 8
-  }
+    "manual": 6
+  },
+  "_manualEntriesNote": "Grants 22-27 in the array above (marked \"manual\": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped."
 }
