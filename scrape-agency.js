@@ -42,8 +42,19 @@ async function checkGrantStatus(browserPage, url) {
         if (m) { dueDate = m[1].trim(); break; }
       }
 
+      // Explicit rolling/continuous-basis language — distinct from "no info
+      // found." If the source says this directly, say so directly too,
+      // rather than falling through to a generic "no deadline listed."
+      const isRolling = !dueDate && (
+        text.includes('rolling basis') ||
+        text.includes('accepted on a continuous basis') ||
+        text.includes('continuously accepted') ||
+        text.includes('ongoing basis') ||
+        text.includes('no application deadline'));
+      if (isRolling) dueDate = 'Rolling';
+
       // Open language that can override a known-closed default
-      const isExplicitlyOpen =
+      const isExplicitlyOpen = isRolling ||
         text.includes('applications are now open') ||
         text.includes('applications are open') ||
         text.includes('now accepting applications') ||
@@ -351,7 +362,12 @@ async function scrapeDEC() {
       }
 
       const hasDate = /\d{1,2}[\/.\-]\d{1,2}|(january|february|march|april|may|june|july|august|september|october|november|december)/i.test(deadlineRaw);
-      const dueDate = (hasDate && deadlineLower !== 'continuous') ? deadlineRaw : '';
+      let dueDate = '';
+      if (deadlineLower === 'continuous' || deadlineLower === 'rolling') {
+        dueDate = 'Rolling';
+      } else if (hasDate) {
+        dueDate = deadlineRaw;
+      }
 
       grants.push({
         id: 'dec-' + title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 40),
