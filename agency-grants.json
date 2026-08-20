@@ -15,7 +15,7 @@
       "title": "Municipal Waste Reduction, Recycling",
       "agency": "NYS Department of Environmental Conservation",
       "status": "Available",
-      "dueDate": "",
+      "dueDate": "Rolling",
       "eligibility": "MUNI",
       "link": "https://dec.ny.gov/environmental-protection/waste-management/grants",
       "source": "DEC"
@@ -25,7 +25,7 @@
       "title": "Household Hazardous Waste Disposal",
       "agency": "NYS Department of Environmental Conservation",
       "status": "Available",
-      "dueDate": "",
+      "dueDate": "Rolling",
       "eligibility": "MUNI",
       "link": "https://dec.ny.gov/environmental-protection/waste-management/grants/household-hazardous-waste-programs-grants",
       "source": "DEC"
@@ -35,7 +35,7 @@
       "title": "Solid Waste Municipal Landfill Closure",
       "agency": "NYS Department of Environmental Conservation",
       "status": "Available",
-      "dueDate": "",
+      "dueDate": "Rolling",
       "eligibility": "MUNI",
       "link": "https://dec.ny.gov/environmental-protection/waste-management/grants/municipal-landfill-closure-projects",
       "source": "DEC"
@@ -45,7 +45,7 @@
       "title": "Municipal Landfill Gas Management",
       "agency": "NYS Department of Environmental Conservation",
       "status": "Available",
-      "dueDate": "",
+      "dueDate": "Rolling",
       "eligibility": "MUNI",
       "link": "https://dec.ny.gov/environmental-protection/waste-management/grants/municipal-landfill-gas-management-projects",
       "source": "DEC"
@@ -95,7 +95,7 @@
       "title": "Brownfield Opportunity Areas - DOS",
       "agency": "NYS Department of Environmental Conservation",
       "status": "Available",
-      "dueDate": "",
+      "dueDate": "Rolling",
       "eligibility": "MUNI, NFP",
       "link": "https://dos.ny.gov/brownfield-redevelopment",
       "source": "DEC"
@@ -277,7 +277,7 @@
       "manual": true
     }
   ],
-  "fetched": "2026-08-20T09:42:25.411Z",
+  "fetched": "2026-08-20T17:17:30.599Z",
   "count": 27,
   "sources": {
     "efc": 1,
