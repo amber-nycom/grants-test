@@ -11,6 +11,24 @@
       "source": "EFC"
     },
     {
+      "id": "dasny-new-york-places-for-learning--",
+      "title": "New York Places for Learning, Activity and Youth Socialization - (NY PLAYS)",
+      "agency": "DASNY",
+      "status": "Available",
+      "dueDate": "",
+      "link": "https://www.dasny.org/sites/default/files/inline-files/NY%20PLAYS%20RecipientList_0.pdf",
+      "source": "DASNY"
+    },
+    {
+      "id": "dasny-rfa-announcement",
+      "title": "RFA Announcement",
+      "agency": "DASNY",
+      "status": "Available",
+      "dueDate": "",
+      "link": "https://www.dasny.org/sites/default/files/inline-files/NY%20PLAYS%20RFA.pdf",
+      "source": "DASNY"
+    },
+    {
       "id": "dec-municipal-waste-reduction--recycling",
       "title": "Municipal Waste Reduction, Recycling",
       "agency": "NYS Department of Environmental Conservation",
@@ -277,13 +295,13 @@
       "manual": true
     }
   ],
-  "fetched": "2026-09-21T15:50:39.840Z",
-  "count": 27,
+  "fetched": "2026-09-24T14:09:37.890Z",
+  "count": 29,
   "sources": {
     "efc": 1,
-    "dasny": 0,
+    "dasny": 2,
     "dec": 20,
     "manual": 6
   },
-  "_manualEntriesNote": "Grants 22-27 in the array above (marked \"manual\": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped."
+  "_manualEntriesNote": "Grants 24-29 in the array above (marked \"manual\": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped."
 }
