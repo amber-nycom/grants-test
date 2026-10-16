@@ -39,6 +39,13 @@
       border: 0;
       overflow: hidden;
     }
+
+    /* Grants: fills the window and scrolls inside its own frame */
+    #grantsFrame {
+      height: calc(100vh - 220px);
+      min-height: 500px;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
@@ -63,10 +70,9 @@
 
     <section id="grants" class="page">
       <h2>Grants</h2>
-      <iframe id="grantsFrame" class="auto-fit"
+      <iframe id="grantsFrame"
               src="https://nycom-grants.github.io/grants/"
-              title="Grants"
-              scrolling="no"></iframe>
+              title="Grants"></iframe>
     </section>
 
     <section id="SOL" class="page">
@@ -92,7 +98,6 @@
     const buttons = document.querySelectorAll('nav button');
     const pages = document.querySelectorAll('.page');
     const portal = document.getElementById('portalFrame');
-    const grantsFrame = document.getElementById('grantsFrame');
 
     // Tab switching
     buttons.forEach(btn => {
@@ -118,14 +123,6 @@
       try {
         new ResizeObserver(fitPortal).observe(portal.contentDocument.body);
       } catch (e) {}
-    });
-
-    // Grants: different site, so it sends its height as a message
-    window.addEventListener('message', e => {
-      if (e.origin !== 'https://nycom-grants.github.io') return;
-      if (e.data && e.data.type === 'grants-height') {
-        grantsFrame.style.height = e.data.height + 'px';
-      }
     });
   </script>
 
