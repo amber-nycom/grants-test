@@ -21,7 +21,6 @@
     /* Pages: one visible at a time. Widths are set per page below. */
     .page { display: none; max-width: 1000px; margin: 0 auto; }
     .page.active { display: block; }
-    .page h2 { margin: 0 0 8px; }
     #grants,
     #rep-finder { max-width: 1600px; }
 
@@ -39,36 +38,49 @@
       min-height: 500px;
     }
     #portalFrame {
-      height: calc(100vh - 300px);
+      height: calc(100vh - 270px);
       min-height: 500px;
     }
     #solFrame {
-      height: calc(100vh - 340px);
+      height: calc(100vh - 300px);
       min-height: 500px;
     }
 
-    /* SOL only: document in the middle at 720px, margins on either side */
-    #SOL { max-width: 1600px; }
+    #rep-finder h2 { margin: 0 0 8px; }
+
+    /* SOL: document + slim right sidebar */
+    #SOL { max-width: 964px; }                /* 720px document + gap + 220px sidebar */
     #SOL.active {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 720px) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) 220px;
       gap: 24px;
     }
+    #SOL .content h2 { margin: 0 0 8px; }
     #SOL .side {
       align-self: start;
       position: sticky;
       top: 16px;
       font-size: 14px;
       color: #444;
+      display: grid;
+      gap: 10px;
     }
-    #SOL .content p  { margin: 0 0 12px; }
-    #SOL .side h3 { margin: 0 0 8px; font-size: 14px; }
-    #SOL .side:first-child { justify-self: end; text-align: right; }
+    #SOL .side h3 { margin: 0; font-size: 14px; }
+    #SOL .side .btn {
+      display: block;
+      padding: 9px 12px;
+      background: #1f3a5f;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+    #SOL .side .btn:hover { background: #2b4d7d; }
 
-    /* Narrow screens: stack instead of using margins */
-    @media (max-width: 1100px) {
-      #SOL.active { display: block; max-width: 720px; }
-      #SOL .side { position: static; margin: 16px 0; }
+    /* Narrow screens: sidebar goes below the document */
+    @media (max-width: 800px) {
+      #SOL.active { display: block; }
+      #SOL .side { position: static; margin-top: 16px; }
     }
   </style>
 </head>
@@ -100,11 +112,6 @@
     </section>
 
     <section id="SOL" class="page">
-      <aside class="side">
-        <h3>Quick links</h3>
-        <p><a href="#">Add your links here</a></p>
-      </aside>
-
       <div class="content">
         <h2>SOL</h2>
         <p>The document below is embedded from Google Docs.</p>
@@ -115,8 +122,10 @@
       </div>
 
       <aside class="side">
-        <h3>Notes</h3>
-        <p>Add your notes here.</p>
+        <h3>Quick links</h3>
+        <a class="btn" href="#">Button one</a>
+        <a class="btn" href="#">Button two</a>
+        <p>Notes or info go here.</p>
       </aside>
     </section>
 
