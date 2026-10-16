@@ -4,114 +4,130 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test Site</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 0; color: #222; }
-  header { background: #1f3a5f; color: #fff; padding: 16px 24px; }
-  nav { background: #e8edf3; padding: 10px 24px; }
-  nav button {
-    border: 0; background: none; padding: 8px 14px; margin-right: 6px;
-    font-size: 16px; cursor: pointer; border-radius: 4px;
-  }
-  nav button.active { background: #1f3a5f; color: #fff; }
-  main { padding: 24px; }
-.page { display: none; max-width: 1000px; margin: 0 auto; }
-.page.active { display: block; }
-#SOL { max-width: 720px; }
-#rep-finder { max-width: 1600px; } 
-#grants { max-width: 1600px; }
-iframe {
-  display: block;
-  width: 100%;
-  height: 800px;
-  margin: 0 auto;
-  border: 1px solid #ccc;
-}
-</style>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; color: #222; }
+
+    header { background: #1f3a5f; color: #fff; padding: 16px 24px; }
+
+    nav { background: #e8edf3; padding: 10px 24px; }
+    nav button {
+      border: 0; background: none; padding: 8px 14px; margin-right: 6px;
+      font-size: 16px; cursor: pointer; border-radius: 4px;
+    }
+    nav button.active { background: #1f3a5f; color: #fff; }
+
+    main { padding: 24px; }
+
+    /* Pages: one visible at a time. Widths are set per page below. */
+    .page { display: none; max-width: 1000px; margin: 0 auto; }
+    .page.active { display: block; }
+    #SOL { max-width: 720px; }
+    #grants,
+    #rep-finder { max-width: 1600px; }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 800px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+    }
+
+    /* Embedded pages that resize themselves, so the page has only one scrollbar */
+    iframe.auto-fit {
+      height: 900px;
+      border: 0;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <h1>Test Site for Stuff and Things</h1>
-</header>
+  <header>
+    <h1>Test Site for Stuff and Things</h1>
+  </header>
 
-<nav>
-  <button class="active" data-page="home">Home</button>
-  <button data-page="grants">Grants</button>
-  <button data-page="SOL">SOL</button>
-  <button data-page="rep-finder">Rep Finder</button>
-</nav>
+  <nav>
+    <button class="active" data-page="home">Home</button>
+    <button data-page="grants">Grants</button>
+    <button data-page="SOL">SOL</button>
+    <button data-page="rep-finder">Rep Finder</button>
+  </nav>
 
-<main>
+  <main>
 
-  <section id="home" class="page active">
-    <h2>Home</h2>
-    <p>Testing ideas site.</p>
-  </section>
+    <section id="home" class="page active">
+      <h2>Home</h2>
+      <p>Testing ideas site.</p>
+    </section>
 
-  <section id="grants" class="page">
-    <h2>Grants</h2>
-  <iframe id="grantsFrame"
-    src="https://nycom-grants.github.io/grants/"
-    title="Grants"
-    scrolling="no" style="width:100%;height:900px;border:0;overflow:hidden">
-  </iframe>
-  </section>
+    <section id="grants" class="page">
+      <h2>Grants</h2>
+      <iframe id="grantsFrame" class="auto-fit"
+              src="https://nycom-grants.github.io/grants/"
+              title="Grants"
+              scrolling="no"></iframe>
+    </section>
 
-  <!-- THE EMBED GOES HERE: inside the SOL section, below the heading -->
-  <section id="SOL" class="page">
-    <h2>SOL</h2>
-    <p>The document below is embedded from Google Docs.</p>
+    <section id="SOL" class="page">
+      <h2>SOL</h2>
+      <p>The document below is embedded from Google Docs.</p>
+      <iframe src="https://docs.google.com/document/d/e/2PACX-1vQ490TeRKAYceEYBvQB9I77hmi6xlcK5GbfJ1nMPPA8y5UpP14jMa7xrIB6joY7xg/pub?embedded=true"
+              title="SOL document"
+              loading="lazy"></iframe>
+    </section>
 
-    <iframe
-      src="https://docs.google.com/document/d/e/2PACX-1vQ490TeRKAYceEYBvQB9I77hmi6xlcK5GbfJ1nMPPA8y5UpP14jMa7xrIB6joY7xg/pub?embedded=true"
-      title="SOL document"
-      loading="lazy">
-    </iframe>
-  </section>
+    <section id="rep-finder" class="page">
+      <h2>Rep Finder</h2>
+      <p>The document below is embedded html.</p>
+      <iframe id="portalFrame" class="auto-fit"
+              src="delegation-portal.html"
+              title="NY Municipal Delegation Portal"
+              scrolling="no"></iframe>
+    </section>
 
-    <!-- REP FINDER PAGE: paste your second Google Doc embed below -->
-  <section id="rep-finder" class="page">
-    <h2>Rep Finder</h2>
-    <p>The document below is embedded html.</p>
- 
-    <iframe id="portalFrame" src="delegation-portal.html" title="NY Municipal Delegation Portal"
-        scrolling="no" style="width:100%;height:900px;border:0;overflow:hidden"></iframe>
-  
-</main>
+  </main>
 
-<script>
-  const buttons = document.querySelectorAll('nav button');
-  const pages = document.querySelectorAll('.page');
+  <script>
+    const buttons = document.querySelectorAll('nav button');
+    const pages = document.querySelectorAll('.page');
+    const portal = document.getElementById('portalFrame');
+    const grantsFrame = document.getElementById('grantsFrame');
 
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
-      pages.forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById(btn.dataset.page).classList.add('active');
+    // Tab switching
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        pages.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.page).classList.add('active');
+        setTimeout(fitPortal, 50);
+      });
     });
-  });
-  const portal = document.getElementById('portalFrame');
 
-function fitPortal() {
-  try {
-    const b = portal.contentDocument.body;
-    portal.style.height = Math.ceil(b.getBoundingClientRect().height) + 4 + 'px';
-  } catch (e) {}
-}
+    // Rep Finder: same site, so read its height directly
+    function fitPortal() {
+      try {
+        const body = portal.contentDocument.body;
+        portal.style.height = Math.ceil(body.getBoundingClientRect().height) + 4 + 'px';
+      } catch (e) {}
+    }
 
-portal.addEventListener('load', () => {
-  fitPortal();
-  new ResizeObserver(fitPortal).observe(portal.contentDocument.body);
-});
-buttons.forEach(btn => btn.addEventListener('click', () => setTimeout(fitPortal, 50)));
-  window.addEventListener('message', e => {
-  if (e.origin !== 'https://nycom-grants.github.io') return;
-  if (e.data && e.data.type === 'grants-height') {
-    document.getElementById('grantsFrame').style.height = e.data.height + 'px';
-  }
-});
-</script>
+    portal.addEventListener('load', () => {
+      fitPortal();
+      try {
+        new ResizeObserver(fitPortal).observe(portal.contentDocument.body);
+      } catch (e) {}
+    });
+
+    // Grants: different site, so it sends its height as a message
+    window.addEventListener('message', e => {
+      if (e.origin !== 'https://nycom-grants.github.io') return;
+      if (e.data && e.data.type === 'grants-height') {
+        grantsFrame.style.height = e.data.height + 'px';
+      }
+    });
+  </script>
 
 </body>
 </html>
