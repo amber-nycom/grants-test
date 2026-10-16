@@ -17,7 +17,8 @@
 .page { display: none; max-width: 1000px; margin: 0 auto; }
 .page.active { display: block; }
 #SOL { max-width: 720px; }
-#rep-finder { max-width: 1600px; }
+#rep-finder { max-width: 1600px; } 
+#grants { max-width: 1600px; }
 iframe {
   display: block;
   width: 100%;
@@ -49,11 +50,11 @@ iframe {
 
   <section id="grants" class="page">
     <h2>Grants</h2>
-    <iframe
-      src="https://nycom-grants.github.io/grants/"
-      title="Grants" 
-      scrolling="no" style="width:100%;height:900px;border:0;overflow:hidden">
-    </iframe>
+  <iframe id="grantsFrame"
+    src="https://nycom-grants.github.io/grants/"
+    title="Grants"
+    scrolling="no" style="width:100%;height:900px;border:0;overflow:hidden">
+  </iframe>
   </section>
 
   <!-- THE EMBED GOES HERE: inside the SOL section, below the heading -->
@@ -104,6 +105,12 @@ portal.addEventListener('load', () => {
   new ResizeObserver(fitPortal).observe(portal.contentDocument.body);
 });
 buttons.forEach(btn => btn.addEventListener('click', () => setTimeout(fitPortal, 50)));
+  window.addEventListener('message', e => {
+  if (e.origin !== 'https://nycom-grants.github.io') return;
+  if (e.data && e.data.type === 'grants-height') {
+    document.getElementById('grantsFrame').style.height = e.data.height + 'px';
+  }
+});
 </script>
 
 </body>
