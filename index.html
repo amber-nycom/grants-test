@@ -46,6 +46,10 @@
       min-height: 500px;
       border: 1px solid #ccc;
     }
+    #solFrame {
+      height: calc(100vh - 220px);
+      min-height: 500px;
+    }
   </style>
 </head>
 <body>
@@ -79,9 +83,10 @@
     <section id="SOL" class="page">
       <h2>SOL</h2>
       <p>The document below is embedded from Google Docs.</p>
-      <iframe src="https://docs.google.com/document/d/e/2PACX-1vQ490TeRKAYceEYBvQB9I77hmi6xlcK5GbfJ1nMPPA8y5UpP14jMa7xrIB6joY7xg/pub?embedded=true"
-              title="SOL document"
-              loading="lazy"></iframe>
+      <iframe id="solFrame"
+        src="https://docs.google.com/document/d/e/2PACX-1vQ490TeRKAYceEYBvQB9I77hmi6xlcK5GbfJ1nMPPA8y5UpP14jMa7xrIB6joY7xg/pub?embedded=true"
+        title="SOL document"
+        loading="lazy"></iframe>
     </section>
 
     <section id="rep-finder" class="page">
