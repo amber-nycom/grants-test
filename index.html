@@ -21,7 +21,6 @@
     /* Pages: one visible at a time. Widths are set per page below. */
     .page { display: none; max-width: 1000px; margin: 0 auto; }
     .page.active { display: block; }
-    #SOL { max-width: 720px; }
     #grants,
     #rep-finder { max-width: 1600px; }
 
@@ -33,27 +32,40 @@
       border: 1px solid #ccc;
     }
 
-    /* Embedded pages that resize themselves, so the page has only one scrollbar */
-    iframe.auto-fit {
-      height: 900px;
-      border: 0;
-      overflow: hidden;
-    }
-
-    /* Grants: fills the window and scrolls inside its own frame */
+    /* Embedded pages fill the window and scroll inside their own frame */
     #grantsFrame {
       height: calc(100vh - 220px);
       min-height: 500px;
-      border: 1px solid #ccc;
     }
     #portalFrame {
       height: calc(100vh - 300px);
       min-height: 500px;
-      border: 1px solid #ccc;
     }
     #solFrame {
       height: calc(100vh - 340px);
       min-height: 500px;
+    }
+
+    /* SOL only: document in the middle at 720px, margins on either side */
+    #SOL { max-width: 1600px; }
+    #SOL.active {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 720px) minmax(0, 1fr);
+      gap: 24px;
+    }
+    #SOL .side {
+      align-self: start;
+      position: sticky;
+      top: 16px;
+      font-size: 14px;
+      color: #444;
+    }
+    #SOL .side h3 { margin: 0 0 8px; font-size: 14px; }
+
+    /* Narrow screens: stack instead of using margins */
+    @media (max-width: 1100px) {
+      #SOL.active { display: block; max-width: 720px; }
+      #SOL .side { position: static; margin: 16px 0; }
     }
   </style>
 </head>
@@ -81,41 +93,53 @@
       <iframe id="grantsFrame"
               src="https://nycom-grants.github.io/grants/"
               title="Grants"
-              allow="clipboard-write">
-      </iframe>
+              allow="clipboard-write"></iframe>
     </section>
 
     <section id="SOL" class="page">
-      <h2>SOL</h2>
-      <p>The document below is embedded from Google Docs.</p>
-      <iframe id="solFrame"
-        src="https://docs.google.com/document/d/e/2PACX-1vQ490TeRKAYceEYBvQB9I77hmi6xlcK5GbfJ1nMPPA8y5UpP14jMa7xrIB6joY7xg/pub?embedded=true"
-        title="SOL document"
-        loading="lazy"></iframe>
+      <aside class="side">
+        <h3>Quick links</h3>
+        <p><a href="#">Add your links here</a></p>
+      </aside>
+
+      <div class="content">
+        <h2>SOL</h2>
+        <p>The document below is embedded from Google Docs.</p>
+        <iframe id="solFrame"
+                src="https://docs.google.com/document/d/e/2PACX-1vQ490TeRKAYceEYBvQB9I77hmi6xlcK5GbfJ1nMPPA8y5UpP14jMa7xrIB6joY7xg/pub?embedded=true"
+                title="SOL document"
+                loading="lazy"></iframe>
+      </div>
+
+      <aside class="side">
+        <h3>Notes</h3>
+        <p>Add your notes here.</p>
+      </aside>
     </section>
 
     <section id="rep-finder" class="page">
       <h2>Rep Finder</h2>
       <iframe id="portalFrame"
-        src="delegation-portal.html"
-        title="NY Municipal Delegation Portal"></iframe>
+              src="delegation-portal.html"
+              title="NY Municipal Delegation Portal"></iframe>
     </section>
 
   </main>
 
- <script>
-  const buttons = document.querySelectorAll('nav button');
-  const pages = document.querySelectorAll('.page');
+  <script>
+    const buttons = document.querySelectorAll('nav button');
+    const pages = document.querySelectorAll('.page');
 
-  // Tab switching
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => b.classList.remove('active'));
-      pages.forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById(btn.dataset.page).classList.add('active');
+    // Tab switching
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        pages.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.page).classList.add('active');
+      });
     });
-  });
-</script>
+  </script>
+
 </body>
 </html>
