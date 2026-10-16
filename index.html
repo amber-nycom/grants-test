@@ -46,6 +46,11 @@
       min-height: 500px;
       border: 1px solid #ccc;
     }
+    #portalFrame {
+      height: calc(100vh - 340px);
+      min-height: 500px;
+      border: 1px solid #ccc;
+    }
     #solFrame {
       height: calc(100vh - 340px);
       min-height: 500px;
@@ -92,45 +97,26 @@
     <section id="rep-finder" class="page">
       <h2>Rep Finder</h2>
       <p>The document below is embedded html.</p>
-      <iframe id="portalFrame" class="auto-fit"
-              src="delegation-portal.html"
-              title="NY Municipal Delegation Portal"
-              scrolling="no"></iframe>
+      <iframe id="portalFrame"
+        src="delegation-portal.html"
+        title="NY Municipal Delegation Portal"></iframe>
     </section>
 
   </main>
 
-  <script>
-    const buttons = document.querySelectorAll('nav button');
-    const pages = document.querySelectorAll('.page');
-    const portal = document.getElementById('portalFrame');
+ <script>
+  const buttons = document.querySelectorAll('nav button');
+  const pages = document.querySelectorAll('.page');
 
-    // Tab switching
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        pages.forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.page).classList.add('active');
-        setTimeout(fitPortal, 50);
-      });
+  // Tab switching
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      pages.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.page).classList.add('active');
     });
-
-    // Rep Finder: same site, so read its height directly
-    function fitPortal() {
-      try {
-        const body = portal.contentDocument.body;
-        portal.style.height = Math.ceil(body.getBoundingClientRect().height) + 4 + 'px';
-      } catch (e) {}
-    }
-
-    portal.addEventListener('load', () => {
-      fitPortal();
-      try {
-        new ResizeObserver(fitPortal).observe(portal.contentDocument.body);
-      } catch (e) {}
-    });
-  </script>
-
+  });
+</script>
 </body>
 </html>
