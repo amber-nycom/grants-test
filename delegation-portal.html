@@ -208,6 +208,29 @@ td.cl{color:var(--muted)}
 .pager button:disabled{opacity:.4;cursor:default}
 .src{font-size:12px;color:var(--muted);max-width:80ch}
 
+
+/* contact info (example data) */
+.contact{border:1px solid var(--line);border-radius:9px;background:var(--soft)}
+.contact summary{display:flex;align-items:center;gap:8px;padding:10px 13px;font-size:13px;font-weight:600;cursor:pointer;list-style:none}
+.contact summary::-webkit-details-marker{display:none}
+.contact summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s}
+.contact[open] summary::after{transform:rotate(-135deg)}
+.contact summary .ico{color:var(--sen)}
+.c-body{display:grid;gap:14px;padding:2px 13px 14px}
+.c-off{display:grid;gap:4px;font-size:13px;min-width:0}
+.c-off b{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.c-off address{font-style:normal}
+.c-more{display:grid;gap:10px;align-content:start}
+.c-line{display:flex;align-items:center;gap:7px;font-size:13px;min-width:0;overflow-wrap:anywhere}
+.c-line .ico{color:var(--muted)}
+.c-social{display:flex;flex-wrap:wrap;gap:8px}
+.soc{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);font-size:12.5px;font-weight:600}
+.demo{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:var(--sen-tint);color:var(--sen-ink)}
+.cpanel{padding:18px 20px;display:grid;gap:14px}
+.cpanel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cpanel-head h3{font-family:var(--font-display);font-weight:800;font-size:16px}
+.cpanel .c-body{padding:0;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+
 @media (max-width:860px){
   .cols{grid-template-columns:minmax(0,1fr)}
 }
@@ -282,6 +305,7 @@ td.cl{color:var(--muted)}
       <div class="chiprow" id="featRow"><span class="lead"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 8-2 6-6 2 2-6 6-2Z"/></svg>Legislative leaders:</span></div>
     </div>
     <div id="sumHero"></div>
+    <div id="sumContact"></div>
     <div class="card bar-card">
       <div class="search"><svg class="ico" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="sumQ" type="search" placeholder="Search within represented municipalities..." aria-label="Search within represented municipalities" autocomplete="off"></div>
       <div class="filters">
@@ -366,8 +390,36 @@ const ICONS={
   award:'<circle cx="12" cy="8" r="6"/><path d="M15.5 13 17 22l-5-3-5 3 1.5-9"/>',
   chev:'<path d="m6 9 6 6 6-6"/>',
   arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
-  percent:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>'
+  percent:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',
+  phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+  mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  instagram:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
+  facebook:'<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+  x:'<path d="M4 4h4l12 16h-4L4 4zM20 4l-6.5 7.5M4 20l6.5-7.5"/>'
 };
+/* ---------- example contact info (placeholder values, Patricia Fahy only) ---------- */
+const CONTACTS={
+ 'Senate|46|Patricia Fahy':{
+  offices:[
+   {label:'Albany office',addr:['123 Example Street, Room 000','Albany, NY 12247'],phone:'(518) 555-0100'},
+   {label:'District office',addr:['456 Sample Avenue, Suite 2','Albany, NY 12208'],phone:'(518) 555-0101'}],
+  email:'example@email.com',
+  social:[['instagram','@example_handle'],['facebook','facebook.com/example.page'],['x','@example_handle']]
+ }
+};
+function contactBody(c){
+  return '<div class="c-body">'+c.offices.map(o=>'<div class="c-off"><b>'+esc(o.label)+'</b><address>'+o.addr.map(esc).join('<br>')+'</address><span class="c-line">'+ico('phone')+esc(o.phone)+'</span></div>').join('')+
+   '<div class="c-more"><span class="c-line">'+ico('mail')+esc(c.email)+'</span><div class="c-social">'+c.social.map(s=>'<span class="soc">'+ico(s[0])+esc(s[1])+'</span>').join('')+'</div></div></div>';
+}
+function contactDetails(p){
+  const c=CONTACTS[p.key]; if(!c) return '';
+  return '<details class="contact"><summary>'+ico('phone')+'Offices, phone &amp; social<span class="demo">Example</span></summary>'+contactBody(c)+'</details>';
+}
+function renderSumContact(p){
+  const c=CONTACTS[p.key];
+  $('#sumContact').innerHTML=c?'<div class="card cpanel"><div class="cpanel-head"><h3>Contact information</h3><span class="demo">Example data</span></div>'+contactBody(c)+'</div>':'';
+}
+
 const ico=n=>'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'+ICONS[n]+'</svg>';
 const ptyChip=p=>'<span class="pty '+(p==='Democratic'?'D':'R')+'">'+p+'</span>';
 const bar=(p,ch)=>'<div class="track"><i class="'+ch+'" style="width:'+Math.min(100,p)+'%"></i></div>';
@@ -433,7 +485,7 @@ const repCombo=Combo($('#repCombo'),{
 const QUICK=['Albany','Buffalo','Rochester','Syracuse','Yonkers','New York City','White Plains','Hempstead'].filter(n=>munis.has(n));
 $('#quickRow').insertAdjacentHTML('beforeend',QUICK.map(n=>'<button type="button" class="quick" data-quick="'+esc(n)+'">'+esc(n)+'</button>').join(''));
 const FEAT=[['Andrea Stewart-Cousins','Senate Majority Leader'],['Robert Ortt','Senate Minority Leader'],['Carl Heastie','Assembly Speaker'],['Crystal Peoples','Assembly Majority Leader'],['Edward Ra','Assembly Minority Leader']].map(([n,role])=>{const p=repList.find(x=>x.name===n);return p&&{p,role};}).filter(Boolean);
-$('#featRow').insertAdjacentHTML('beforeend',FEAT.map(({p,role})=>'<button type="button" class="quick" data-feat="'+esc(p.key)+'">'+esc(p.name)+' · '+role+' ('+p.munis.length+' munis)</button>').join(''));
+$('#featRow').insertAdjacentHTML('beforeend',FEAT.map(({p,role})=>'<button type="button" class="quick" data-feat="'+esc(p.key)+'">'+esc(p.name)+' · '+role+' ('+(p.munis.length===1?'1 muni':p.munis.length+' munis')+')</button>').join(''));
 $('#boroRow').insertAdjacentHTML('beforeend',['All'].concat(BOROS).map(b=>'<button type="button" class="quick" data-boro="'+b+'">'+(b==='All'?'All boroughs':b)+'</button>').join(''));
 
 /* ---------- Municipality Finder ---------- */
@@ -456,7 +508,7 @@ function repCard(g){
   const p=g.rep;
   return '<article class="card repcard"><div class="rep-tags"><span class="dist">'+p.ch+' District '+p.d+'</span>'+ptyChip(p.party)+'</div>'+
    '<h4>'+titleOf(p)+' '+esc(p.name)+'</h4>'+
-   '<div class="cov">'+covRows(g.entries,p.ch)+'</div>'+
+   '<div class="cov">'+covRows(g.entries,p.ch)+'</div>'+contactDetails(p)+
    '<button type="button" class="link" data-act="rep" data-rep="'+esc(p.key)+'">View all municipalities represented by '+esc(p.name)+ico('arrow')+'</button></article>';
 }
 function renderFinder(){
@@ -491,6 +543,7 @@ function renderSumHero(){
    '<span class="htag navy">'+p.ch+' District '+p.d+'</span><span class="htag '+(p.party==='Democratic'?'dem':'rep')+'">'+p.party+'</span></div>'+
    '<h2>'+esc(p.name)+'<small>(Representing '+plural(p.munis.length,'Municipality','Municipalities')+')</small></h2></div>'+
    '<div class="scope"><span class="eyebrow">Local constituency scope</span><b><span class="o">'+plural(p.cities,'City','Cities')+'</span> &nbsp;|&nbsp; '+plural(p.villages,'Village')+'</b></div></div>';
+  renderSumContact(p);
   renderSumGrid();
 }
 function renderSumGrid(){
