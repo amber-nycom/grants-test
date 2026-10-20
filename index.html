@@ -37,8 +37,10 @@
     #grantsFrame { height: calc(100vh - 160px); min-height: 500px; }
     #portalFrame { height: calc(100vh - 160px); min-height: 500px; }
     #solFrame    { height: calc(100vh - 230px); min-height: 500px; }
+    #weeklyFrame { height: calc(100vh - 230px); min-height: 500px; }
 
     #rep-finder h2 { margin: 0 0 8px; }
+    #weekly-update h2 { margin: 0 0 4px; }
 
     /* SOL: centered document, sidebar flush with the page's right edge */
     #SOL { max-width: none; }
@@ -91,6 +93,7 @@
     <button data-page="grants">Grants</button>
     <button data-page="SOL">SOL</button>
     <button data-page="rep-finder">Rep Finder</button>
+    <button data-page="weekly-update">Weekly Update</button>
   </nav>
 
   <main>
@@ -129,6 +132,17 @@
       <iframe id="portalFrame"
               src="delegation-portal.html"
               title="NY Municipal Delegation Portal"></iframe>
+    </section>
+
+    <section id="weekly-update" class="page">
+      <h2>Weekly Update</h2>
+      <p>The document below is embedded from Google Docs.</p>
+      <!-- Replace PLACEHOLDER_DOC_ID with your published Google Doc's ID
+           (File > Share > Publish to web > Embed gives you the full URL). -->
+      <iframe id="weeklyFrame"
+              src="https://docs.google.com/document/d/e/PLACEHOLDER_DOC_ID/pub?embedded=true"
+              title="Weekly Update document"
+              loading="lazy"></iframe>
     </section>
 
   </main>
