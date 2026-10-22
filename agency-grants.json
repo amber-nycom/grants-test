@@ -132,8 +132,8 @@
       "id": "dec-community-reforestation--core--grant",
       "title": "Community Reforestation (CoRe) Grant",
       "agency": "NYS Department of Environmental Conservation",
-      "status": "Closed",
-      "dueDate": "",
+      "status": "Available",
+      "dueDate": "November 4, 2026",
       "eligibility": "MUNI, NFP, OT",
       "link": "https://dec.ny.gov/nature/forests-trees/urban-and-community-forestry/urban-and-community-forestry-grants",
       "source": "DEC"
@@ -295,7 +295,7 @@
       "manual": true
     }
   ],
-  "fetched": "2026-10-19T16:23:42.186Z",
+  "fetched": "2026-10-22T14:27:58.681Z",
   "count": 29,
   "sources": {
     "efc": 1,
