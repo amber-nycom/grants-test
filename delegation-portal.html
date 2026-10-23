@@ -203,6 +203,12 @@ td.cl{color:var(--muted)}
 .pcell{display:inline-flex;align-items:center;gap:10px;justify-content:flex-end}
 .pcell b{font-family:var(--font-mono);font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
 .pcell .track{width:56px}
+.sortbtn{display:inline-flex;align-items:center;gap:6px;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;white-space:nowrap;padding:2px 0}
+.sortbtn:hover{text-decoration:underline}
+.sortbtn:focus-visible{outline-color:#fff}
+.sortbtn .arr{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;opacity:.35;border-bottom:5px solid currentColor;border-top:0;margin-top:0}
+th[aria-sort="ascending"] .arr{opacity:1;border-bottom:5px solid currentColor}
+th[aria-sort="descending"] .arr{opacity:1;border-bottom:0;border-top:5px solid currentColor}
 .pager{display:flex;align-items:center;justify-content:center;gap:14px;font-size:12.5px;color:var(--muted)}
 .pager button{padding:7px 14px;border:1px solid var(--line-strong);border-radius:8px;font-weight:600;color:var(--ink);background:var(--surface)}
 .pager button:disabled{opacity:.4;cursor:default}
@@ -339,7 +345,7 @@ td.cl{color:var(--muted)}
     <div class="card tablecard">
       <div class="scroller">
         <table>
-          <thead><tr><th>Official</th><th>Chamber</th><th>District</th><th>Party</th><th>Municipality</th><th>Class</th><th title="Share of the municipality in this district. For New York City, share of the borough.">% in district</th></tr></thead>
+          <thead><tr><th data-sort="name" aria-sort="none"><button type="button" class="sortbtn">Official<span class="arr" aria-hidden="true"></span></button></th><th data-sort="ch" aria-sort="none"><button type="button" class="sortbtn">Chamber<span class="arr" aria-hidden="true"></span></button></th><th data-sort="d" aria-sort="none"><button type="button" class="sortbtn">District<span class="arr" aria-hidden="true"></span></button></th><th data-sort="party" aria-sort="none"><button type="button" class="sortbtn">Party<span class="arr" aria-hidden="true"></span></button></th><th data-sort="muni" aria-sort="none"><button type="button" class="sortbtn">Municipality<span class="arr" aria-hidden="true"></span></button></th><th data-sort="cls" aria-sort="none"><button type="button" class="sortbtn">Class<span class="arr" aria-hidden="true"></span></button></th><th data-sort="pct" aria-sort="none" title="Share of the municipality in this district. For New York City, share of the borough."><button type="button" class="sortbtn">% in district<span class="arr" aria-hidden="true"></span></button></th></tr></thead>
           <tbody id="allBody"></tbody>
         </table>
       </div>
@@ -435,7 +441,7 @@ const ptyChip=p=>'<span class="pty '+(p==='Democratic'?'D':'R')+'">'+p+'</span>'
 const bar=(p,ch)=>'<div class="track"><i class="'+ch+'" style="width:'+Math.min(100,p)+'%"></i></div>';
 
 /* ---------- state ---------- */
-const S={tab:'finder',muni:'Albany',boro:'Manhattan',rep:null,sumType:'All',sumQ:'',all:{q:'',ch:'All',party:'All',per:'50',page:0}};
+const S={tab:'finder',muni:'Albany',boro:'Manhattan',rep:null,sumType:'All',sumQ:'',all:{q:'',ch:'All',party:'All',per:'50',page:0,sort:null,dir:1}};
 S.rep=[...reps.values()].find(p=>p.name==='Andrea Stewart-Cousins')?.key||repList[0].key;
 
 /* ---------- masthead stats ---------- */
@@ -572,13 +578,37 @@ function selectRep(key){ if(!reps.has(key))return; S.rep=key; S.sumQ=''; $('#sum
 /* ---------- All Representatives ---------- */
 function filteredRows(){
   const A=S.all,q=A.q.trim().toLowerCase();
-  return rows.filter(r=>(A.ch==='All'||r.ch===A.ch)&&(A.party==='All'||r.party===A.party)&&(!q||r.hay.includes(q)));
+  const f=rows.filter(r=>(A.ch==='All'||r.ch===A.ch)&&(A.party==='All'||r.party===A.party)&&(!q||r.hay.includes(q)));
+  if(A.sort) f.sort(sortCmp(A.sort,A.dir));
+  return f;
+}
+/* Sorting. Blank municipality / % (the two members with no municipalities) always sink to the bottom. */
+const byName=(a,b)=>lastName(a.name).localeCompare(lastName(b.name))||a.name.localeCompare(b.name);
+function sortCmp(key,dir){
+  const txt=(a,b)=>a.localeCompare(b);
+  return (a,b)=>{
+    let c=0;
+    if(key==='name') c=byName(a,b)*dir;
+    else if(key==='d') c=(a.d-b.d)*dir||a.ch.localeCompare(b.ch);
+    else if(key==='pct'){
+      if(a.pct===null||b.pct===null) return (a.pct===null)-(b.pct===null);
+      c=(a.pct-b.pct)*dir;
+    }
+    else if(key==='muni'||key==='cls'){
+      if(!a[key]||!b[key]) return (!a[key])-(!b[key]);
+      c=txt(a[key],b[key])*dir;
+      if(!c&&key==='muni') c=txt(a.boro,b.boro)*dir;
+    }
+    else c=txt(a[key],b[key])*dir;
+    return c||byName(a,b)||(a.d-b.d);
+  };
 }
 function renderAll(){
   const A=S.all,f=filteredRows(),total=f.length;
   const per=A.per==='all'?Math.max(total,1):+A.per, pages=Math.max(1,Math.ceil(total/per));
   A.page=Math.min(A.page,pages-1);
   const start=A.page*per,end=Math.min(total,start+per);
+  document.querySelectorAll('#p-all th[data-sort]').forEach(th=>th.setAttribute('aria-sort',A.sort===th.dataset.sort?(A.dir===1?'ascending':'descending'):'none'));
   $('#allMeta').innerHTML=total?'Showing <b>'+(start+1)+'</b> to <b>'+end+'</b> of <b>'+total+'</b> representative records':'No representative records match these filters.';
   $('#allBody').innerHTML=f.slice(start,end).map(r=>{
     const noMuni=!r.muni;
@@ -622,6 +652,12 @@ $('#sumQ').addEventListener('input',e=>{S.sumQ=e.target.value;renderSumGrid();})
     S.all[$('#'+id).dataset.key]=b.dataset.val; S.all.page=0;
     document.querySelectorAll('#'+id+' button').forEach(x=>x.classList.toggle('on',x===b)); renderAll();
   });
+});
+document.querySelector('#p-all thead').addEventListener('click',e=>{
+  const th=e.target.closest('th[data-sort]'); if(!th)return;
+  const k=th.dataset.sort,A=S.all;
+  if(A.sort===k) A.dir=-A.dir; else {A.sort=k;A.dir=(k==='pct')?-1:1;}
+  A.page=0; renderAll();
 });
 $('#allQ').addEventListener('input',e=>{S.all.q=e.target.value;S.all.page=0;renderAll();});
 window.addEventListener('hashchange',()=>goTab(location.hash.slice(1)));
