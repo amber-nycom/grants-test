@@ -229,9 +229,10 @@ th[aria-sort="descending"] .arr{opacity:1;border-bottom:0;border-top:5px solid c
 .c-more{display:grid;gap:10px;align-content:start}
 .c-line{display:flex;align-items:center;gap:7px;font-size:13px;min-width:0;overflow-wrap:anywhere}
 .c-line .ico{color:var(--muted)}
+.c-line a,.soc{color:inherit;text-decoration:none}
+.c-line a:hover,.soc:hover{color:var(--asm-ink);text-decoration:underline}
 .c-social{display:flex;flex-wrap:wrap;gap:8px}
 .soc{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--chip);font-size:12.5px;font-weight:600}
-.demo{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:4px;background:var(--sen-tint);color:var(--sen-ink)}
 .cpanel{padding:18px 20px;display:grid;gap:14px}
 .cpanel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cpanel-head h3{font-family:var(--font-display);font-weight:800;font-size:16px}
@@ -413,27 +414,27 @@ const ICONS={
   facebook:'<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
   x:'<path d="M4 4h4l12 16h-4L4 4zM20 4l-6.5 7.5M4 20l6.5-7.5"/>'
 };
-/* ---------- example contact info (placeholder values, Patricia Fahy only) ---------- */
+/* ---------- contact info (Senator Fahy only for now) ---------- */
 const CONTACTS={
  'Senate|46|Patricia Fahy':{
   offices:[
-   {label:'Albany office',addr:['123 Example Street, Room 000','Albany, NY 12247'],phone:'(518) 555-0100'},
-   {label:'District office',addr:['456 Sample Avenue, Suite 2','Albany, NY 12208'],phone:'(518) 555-0101'}],
-  email:'example@email.com',
-  social:[['instagram','@example_handle'],['facebook','facebook.com/example.page'],['x','@example_handle']]
+   {label:'District office',addr:['430 State Capitol Building','Albany, NY 12247'],phone:'518-455-2225'},
+   {label:'Albany office',addr:['708 Legislative Office Building','Albany, NY 12247'],phone:'518-455-2225'}],
+  email:'fahy@nysenate.gov',
+  social:[['instagram','@patfahy46','https://www.instagram.com/patfahy46'],['facebook','@PatFahy46','https://www.facebook.com/PatFahy46'],['x','@PatFahy46','https://x.com/PatFahy46']]
  }
 };
 function contactBody(c){
-  return '<div class="c-body">'+c.offices.map(o=>'<div class="c-off"><b>'+esc(o.label)+'</b><address>'+o.addr.map(esc).join('<br>')+'</address><span class="c-line">'+ico('phone')+esc(o.phone)+'</span></div>').join('')+
-   '<div class="c-more"><span class="c-line">'+ico('mail')+esc(c.email)+'</span><div class="c-social">'+c.social.map(s=>'<span class="soc">'+ico(s[0])+esc(s[1])+'</span>').join('')+'</div></div></div>';
+  return '<div class="c-body">'+c.offices.map(o=>'<div class="c-off"><b>'+esc(o.label)+'</b><address>'+o.addr.map(esc).join('<br>')+'</address><span class="c-line">'+ico('phone')+'<a href="tel:'+esc(o.phone.replace(/[^0-9]/g,''))+'">'+esc(o.phone)+'</a></span></div>').join('')+
+   '<div class="c-more"><span class="c-line">'+ico('mail')+'<a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a></span><div class="c-social">'+c.social.map(s=>'<a class="soc" href="'+esc(s[2])+'" target="_blank" rel="noopener">'+ico(s[0])+esc(s[1])+'</a>').join('')+'</div></div></div>';
 }
 function contactDetails(p){
   const c=CONTACTS[p.key]; if(!c) return '';
-  return '<details class="contact"><summary>'+ico('phone')+'Offices, phone &amp; social<span class="demo">Example</span></summary>'+contactBody(c)+'</details>';
+  return '<details class="contact"><summary>'+ico('phone')+'Offices, phone &amp; social</summary>'+contactBody(c)+'</details>';
 }
 function renderSumContact(p){
   const c=CONTACTS[p.key];
-  $('#sumContact').innerHTML=c?'<div class="card cpanel"><div class="cpanel-head"><h3>Contact information</h3><span class="demo">Example data</span></div>'+contactBody(c)+'</div>':'';
+  $('#sumContact').innerHTML=c?'<div class="card cpanel"><div class="cpanel-head"><h3>Contact information</h3></div>'+contactBody(c)+'</div>':'';
 }
 
 const ico=n=>'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'+ICONS[n]+'</svg>';
