@@ -1,6 +1,26 @@
 {
   "grants": [
     {
+      "id": "efc-clean-water-for-housing",
+      "title": "Clean Water for Housing",
+      "agency": "NYS Environmental Facilities Corporation",
+      "status": "Available",
+      "dueDate": "",
+      "description": "$225M in grants available to support the municipal water systems needed to build housing.",
+      "link": "https://efc.ny.gov/clean-water-housing",
+      "source": "EFC"
+    },
+    {
+      "id": "efc-green-resiliency-grants-and-gr",
+      "title": "Green Resiliency Grants and Green Innovation Grant Program",
+      "agency": "NYS Environmental Facilities Corporation",
+      "status": "Available",
+      "dueDate": "",
+      "description": "Grants for implementing green infrastructure projects including stormwater management, water efficiency, and energy efficiency.",
+      "link": "https://efc.ny.gov/grg",
+      "source": "EFC"
+    },
+    {
       "id": "efc-clean-vessel-assistance-progra",
       "title": "Clean Vessel Assistance Program",
       "agency": "NYS Environmental Facilities Corporation",
@@ -295,13 +315,13 @@
       "manual": true
     }
   ],
-  "fetched": "2026-10-22T14:27:58.681Z",
-  "count": 29,
+  "fetched": "2026-10-26T16:02:49.345Z",
+  "count": 31,
   "sources": {
-    "efc": 1,
+    "efc": 3,
     "dasny": 2,
     "dec": 20,
     "manual": 6
   },
-  "_manualEntriesNote": "Grants 24-29 in the array above (marked \"manual\": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped."
+  "_manualEntriesNote": "Grants 26-31 in the array above (marked \"manual\": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped."
 }
