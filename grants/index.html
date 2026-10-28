@@ -391,6 +391,12 @@
         </select>
       </div>
       <div class="filter-group">
+        <h4>Region</h4>
+        <select class="select-filter" id="og-region" onchange="ogApply()">
+          <option value="">All regions</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <h4>Status</h4>
         <div class="filter-item"><input type="checkbox" id="og-posted" checked onchange="ogApply()"><label for="og-posted">Posted / Open</label></div>
         <div class="filter-item"><input type="checkbox" id="og-closed" onchange="ogApply()"><label for="og-closed">Closed</label></div>
@@ -413,6 +419,9 @@
         <button class="mobile-filter-btn" onclick="ogMobileStatus('closed',this)">Closed</button>
         <select class="mobile-cat-select" id="mobile-og-type" onchange="ogMobileType(this.value)">
           <option value="">All types</option>
+        </select>
+        <select class="mobile-cat-select" id="mobile-og-region" onchange="ogMobileRegion(this.value)">
+          <option value="">All regions</option>
         </select>
       </div>
       <div class="grants-grid" id="og-grid">
@@ -1665,7 +1674,9 @@ const OG_TYPE_COLORS = {
 };
 const ogIndex = [];
 let ogAll = [], ogLoaded = false;
-const og = { type: '', statuses: ['posted'], sort: 'closeDate|asc' };
+const og = { type: '', region: '', statuses: ['posted'], sort: 'closeDate|asc' };
+// A grant can list several regions in one cell, separated by commas or semicolons.
+const ogRegions = g => (g.region || '').split(/[,;]/).map(s => s.trim()).filter(Boolean);
 
 async function loadOtherGrants() {
   if (OTHER_GRANTS_CSV_URL) {
@@ -1692,6 +1703,9 @@ function ogBuildTypes() {
   const ordered = [...OG_TYPE_ORDER.filter(x => present.includes(x)), ...present.filter(x => !OG_TYPE_ORDER.includes(x)).sort()];
   const opts = '<option value="">All types</option>' + ordered.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
   ['og-type', 'mobile-og-type'].forEach(id => { const el = document.getElementById(id); if (el) { const cur = el.value; el.innerHTML = opts; if (cur) el.value = cur; } });
+  const regions = [...new Set(ogAll.flatMap(ogRegions))].sort((a, b) => (a === 'Statewide' ? -1 : b === 'Statewide' ? 1 : a.localeCompare(b)));
+  const ropts = '<option value="">All regions</option>' + regions.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  ['og-region', 'mobile-og-region'].forEach(id => { const el = document.getElementById(id); if (el) { const cur = el.value; el.innerHTML = ropts; if (cur) el.value = cur; } });
 }
 function renderOtherGrants() {
   const grid = document.getElementById('og-grid');
@@ -1700,6 +1714,7 @@ function renderOtherGrants() {
   if (!ogAll.length) return msg(OTHER_GRANTS_CSV_URL ? 'No other grants are listed yet.' : 'Other Grants is not set up yet (no sheet link).');
   let list = ogAll.filter(g => {
     if (og.type && g.source !== og.type) return false;
+    if (og.region && !ogRegions(g).includes(og.region)) return false;
     return isAgencyGrantClosed(g) ? og.statuses.includes('closed') : og.statuses.includes('posted');
   });
   const [field, dir] = og.sort.split('|');
@@ -1717,6 +1732,7 @@ function renderOtherGrants() {
 }
 function ogApply() {
   og.type = document.getElementById('og-type').value;
+  og.region = document.getElementById('og-region').value;
   og.sort = document.getElementById('og-sort').value;
   og.statuses = [];
   if (document.getElementById('og-posted').checked) og.statuses.push('posted');
@@ -1731,6 +1747,7 @@ function ogMobileStatus(status, btn) {
   renderOtherGrants();
 }
 function ogMobileType(v) { og.type = v; renderOtherGrants(); }
+function ogMobileRegion(v) { og.region = v; renderOtherGrants(); }
 
 loadGrantData();
 loadOtherGrants();
