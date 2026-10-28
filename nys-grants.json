@@ -1,0 +1,215 @@
+{
+  "grants": [
+    {
+      "id": "AFTYP3",
+      "agency": "AGM01",
+      "title": "2027 TYCLF",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "12/01/2026 4:00PM EST",
+      "link": "https://agriculture.ny.gov/funding-opportunities",
+      "serviceArea": "Agricultural Supports, Education Supports, Family Supports, Public Transportation Services",
+      "source": "NYS"
+    },
+    {
+      "id": "FPIG20",
+      "agency": "AGM01",
+      "title": "Round 20 Farmland Protection Implementation Grants",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit",
+      "dueDate": "06/01/2027 4:00PM EDT",
+      "link": "https://agriculture.ny.gov/rfa-0393-farmland-protection-implementation-grants-round-20-agricultural-conservation-easement",
+      "serviceArea": "Agricultural Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "RSFI26",
+      "agency": "AGM01",
+      "title": "Regional School Food Infrastructure Grant Program",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "01/22/2027 3:00PM EST",
+      "link": "https://agriculture.ny.gov/rfp-0423-new-york-state-regional-school-food-infrastructure-grant-program",
+      "serviceArea": "Agricultural Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "EVT0000010",
+      "agency": "DCJ01",
+      "title": "ERPO Infrastructure and Implementation",
+      "status": "Advertised Only - Not in SFS",
+      "eligibility": "Governmental Entity",
+      "dueDate": "12/02/2026 12:00PM EST",
+      "link": "https://criminaljustice.ny.gov/ofpa/index.htm",
+      "serviceArea": "Justice Services, Public Safety Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "CDD-HA-27",
+      "agency": "DDP01",
+      "title": "Health Advocate Training",
+      "status": "Advertised Only - Not in SFS",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "12/04/2026 11:59PM EST",
+      "link": "https://cdd.ny.gov/funding",
+      "serviceArea": "Health Services",
+      "source": "NYS"
+    },
+    {
+      "id": "CDD_INN_26",
+      "agency": "DDP01",
+      "title": "Innovations Grant Improving Cross-Systems Collab",
+      "status": "Advertised Only - Not in SFS",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "11/30/2026 11:59PM EST",
+      "link": "https://cdd.ny.gov/funding",
+      "serviceArea": "Agricultural Supports, Education Supports, Environmental Supports, Family Supports, Government Supports, Health Services, Housing and Shelter Services, Justice Services, Public Safety Supports, Public Transportation Services, Workforce Development",
+      "source": "NYS"
+    },
+    {
+      "id": "CFCR4",
+      "agency": "DEC01",
+      "title": "Community Forest Conservation Round 4",
+      "status": "Available",
+      "eligibility": "Governmental Entity",
+      "dueDate": "12/16/2026 3:00PM EST",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "CORE 2026",
+      "agency": "DEC01",
+      "title": "CoRe 2026",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "11/04/2026 2:00PM EST",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "HRE50 2026",
+      "agency": "DEC01",
+      "title": "HRE Round 50 Tributary Restoration and Resiliency",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "12/17/2026 3:00PM EST",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "HRER49",
+      "agency": "DEC01",
+      "title": "HRE Round 49 River Access",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "12/17/2026 3:00PM EST",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "HRER51",
+      "agency": "DEC01",
+      "title": "HRE Round 51 Local Stewardship Planning",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "12/17/2026 3:00PM EST",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "HRER52",
+      "agency": "DEC01",
+      "title": "HRE Round 52 Grants for River Education",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "12/17/2026 3:00PM EST",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "MWRC 2026",
+      "agency": "DEC01",
+      "title": "Municipal Waste Reduction Recycling Coordination",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Tribal Organization",
+      "dueDate": "10/30/2026 3:00PM EDT",
+      "link": "https://dec.ny.gov/environmental-protection/waste-management/grants",
+      "serviceArea": "Environmental Supports, Government Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "MWRR 2024",
+      "agency": "DEC01",
+      "title": "Municipal Waste Reduction and Rcycling. Prgrm. 24",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "11/01/2027 3:00PM EDT",
+      "link": "https://dec.ny.gov/environmental-protection/waste-management/grants",
+      "serviceArea": "Environmental Supports, Government Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "DWFRFA2028",
+      "agency": "DOH01",
+      "title": "Drinking Water Fluoridation RFA",
+      "status": "Advertised Only - Not in SFS",
+      "eligibility": "For Profit, Governmental Entity, Not-For-Profit",
+      "dueDate": "09/28/2028 4:00PM EDT",
+      "link": "https://www.health.ny.gov/funding/rfa/20171/",
+      "serviceArea": "Government Supports, Health Services",
+      "source": "NYS"
+    },
+    {
+      "id": "GCEW-EV",
+      "agency": "DOL01",
+      "title": "NYSDOL OJET GCEW-EV",
+      "status": "Available",
+      "eligibility": "For Profit, Governmental Entity, Not-For-Profit",
+      "dueDate": "12/03/2026 4:00PM EST",
+      "link": "https://dol.ny.gov/funding-opportunities",
+      "serviceArea": "Workforce Development",
+      "source": "NYS"
+    },
+    {
+      "id": "MH253021",
+      "agency": "OMH01",
+      "title": "Crisis Stabilization Centers",
+      "status": "Available",
+      "eligibility": "For Profit, Governmental Entity, Not-For-Profit",
+      "dueDate": "12/15/2026 2:00PM EST",
+      "link": "https://omh.ny.gov/omhweb/rfp/",
+      "serviceArea": "Health Services",
+      "source": "NYS"
+    },
+    {
+      "id": "MH263037",
+      "agency": "OMH01",
+      "title": "Health-led Community Behavioral Health Crisis",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit",
+      "dueDate": "11/19/2026 2:00PM EST",
+      "link": "https://omh.ny.gov/omhweb/rfp/",
+      "serviceArea": "Health Services, Public Safety Supports",
+      "source": "NYS"
+    },
+    {
+      "id": "VENTURE_VI",
+      "agency": "TDA01",
+      "title": "Venture VI Program for SNAP Participants",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit",
+      "dueDate": "07/22/2030 5:00PM EDT",
+      "link": "https://otda.ny.gov/contracts/2026/VentureVI/",
+      "serviceArea": "Workforce Development",
+      "source": "NYS"
+    }
+  ],
+  "fetched": "2026-10-26T14:48:34.778Z",
+  "count": 19
+}
