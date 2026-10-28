@@ -1099,7 +1099,7 @@ function toggleCFA() {
 // Due date -> local-midnight Date, or null if it isn't a clear date with a year (e.g. "Rolling", "April 15").
 function parseDueLocal(raw) {
   if (!raw || /rolling/i.test(raw)) return null;
-  const cleaned = raw.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
+  const cleaned = raw.replace(/(\s+at)?\s+\d{1,2}:\d{2}.*$/i, '').trim();
   const m = cleaned.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (m) return new Date(+m[3], +m[1] - 1, +m[2]);
   const iso = cleaned.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
@@ -1112,7 +1112,7 @@ function parseDueLocal(raw) {
 // Text with no year ("April 15", "Rolling") comes back unchanged.
 function fmtDueDate(raw) {
   const d = parseDueLocal(raw);
-  if (!d) return (raw || '').replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
+  if (!d) return (raw || '').replace(/(\s+at)?\s+\d{1,2}:\d{2}.*$/i, '').trim();
   return String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0') + '/' + d.getFullYear();
 }
 // Whole days from today until the due date (0 = today, negative = past), or null if not a clear date.
@@ -1209,7 +1209,7 @@ function renderGrants() {
   function parseCombinedDate(g) {
     const raw = g.dueDate || g.closeDate || '';
     if (!raw) return null;
-    const cleaned = raw.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
+    const cleaned = raw.replace(/(\s+at)?\s+\d{1,2}:\d{2}.*$/i, '').trim();
     const normalized = cleaned.replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, '$3-$1-$2');
     const d = new Date(normalized);
     return isNaN(d.getTime()) ? null : d;
@@ -1404,7 +1404,7 @@ const stateIndex = [];
 function fmtStateDue(raw) {
   if (!raw) return '';
   const time = (raw.match(/\s+(\d{1,2}:\d{2}.*)$/) || [])[1] || '';
-  const cleaned = raw.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
+  const cleaned = raw.replace(/(\s+at)?\s+\d{1,2}:\d{2}.*$/i, '').trim();
   const shown = fmtDueDate(raw);
   return time ? shown + ' · ' + time : shown;
 }
@@ -1468,8 +1468,8 @@ function openStateModal(i, list) {
         ${!isAgency && idText ? row('SFS ID', idText) : ''}
       </div>
     </div>
-    ${special.filter(x => x.v.length > 70).map(x => `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">${esc(x.k)}</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${linkify(x.v)}</div></div>`).join('')}
     ${g.description ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Description</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;max-height:160px;overflow-y:auto;">${esc(g.description)}</div></div>` : ''}
+    ${special.filter(x => x.v.length > 70).map(x => `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">${esc(x.k)}</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${linkify(x.v)}</div></div>`).join('')}
     ${g.conference ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Bidder's conference / workshop</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${esc(g.conference)}</div></div>` : ''}
     ${areas.length ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Service areas</div><div class="modal-tag-row" style="margin:6px 0 0;">${areas.map(a => `<span class="tag" style="background:var(--surface-alt);color:var(--text-mid);border:1px solid var(--border);">${esc(a)}</span>`).join('')}</div></div>` : ''}
     ${elig ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Eligibility</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${esc(elig)}</div></div>` : ''}
