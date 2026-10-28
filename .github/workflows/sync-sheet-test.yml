@@ -1,0 +1,26 @@
+name: Sync Sheet (test)
+
+# Manual only: does nothing unless you click "Run workflow". It does not run the scrapers;
+# it sends the agency-grants.json / nys-grants.json already in the repo to the Google Sheet.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (report what would change, write nothing)'
+        type: boolean
+        default: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Send grants to the sheet
+        run: node sync-to-sheet.js
+        env:
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+          SHEET_SECRET: ${{ secrets.SHEET_SECRET }}
+          DRY_RUN: ${{ inputs.dry_run }}
