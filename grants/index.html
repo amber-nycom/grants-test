@@ -667,7 +667,7 @@ const CAT = {
   NR:'Natural Resources',OZ:'Opportunity Zones',RD:'Regional Development',
   ST:'Science & Technology',T:'Transportation',ACA:'Affordable Care Act',RA:'Recovery Act',O:'Other'
 };
- 
+
 const NYS_AGENCY_COLORS = {
   'DEC01':'background:#0f5132;color:#fff;','PRK01':'background:#14532d;color:#fff;',
   'DOH01':'background:#1e3a5f;color:#fff;','AGM01':'background:#3b5e2b;color:#fff;',
@@ -1150,6 +1150,8 @@ function renderGrants() {
   <span class="tag" style="background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);">SFS Only</span>
   <span>= no direct announcement link available — copy the <strong>ID</strong> first, then click <strong>View ↗</strong> to open the SFS portal and paste it into the EVENT ID field and click search to find the listing.</span>
 </div>`;
+    stateIndex.length = 0;
+    combined.forEach((g, i) => { g._i = i; stateIndex[i] = g; });
     html += combined.map(g => g._type === 'agency' ? renderAgencyCard(g) : renderNYSCard(g)).join('');
   }
 
@@ -1212,7 +1214,7 @@ function renderAgencyCard(g) {
     }
   } else if (isClosed) { dl = `<span class="deadline-row">⏱ Closed · no fixed deadline listed</span>`; }
   else { dl = `<span class="deadline-row rolling">⟳ No deadline listed — check with agency</span>`; }
-  return `<div class="grant-card" style="${isClosed?'opacity:0.55;':''}">
+  return `<div class="grant-card" style="${isClosed?'opacity:0.55;':''}" onclick="openStateModal(${g._i})">
     <div class="card-top"><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="tag" style="${sourceStyle}">${esc(g.source||'Agency')}</span><span class="tag ${sc}">${esc(isClosed?'Closed':g.status||'Available')}</span></div></div>
     <div class="card-title">${esc(g.title)}</div>
     <div class="card-agency">${esc(g.agency||'')}</div>
@@ -1248,7 +1250,7 @@ function renderNYSCard(g) {
   const agencyBadge = NYS_AGENCY_LABELS[g.agency] || g.agency || 'NYS';
   const agencyFull  = NYS_AGENCY_NAMES[g.agency]  || g.agency || 'New York State';
   const agencyStyle = NYS_AGENCY_COLORS[g.agency]  || 'background:var(--nys);color:#fff;';
-  return `<div class="grant-card">
+  return `<div class="grant-card" onclick="openStateModal(${g._i})">
     <div class="card-top"><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="tag" style="${agencyStyle}">${esc(agencyBadge)}</span><span class="tag ${sc}">${esc(statusLabel)}</span>${isSfsOnly?`<span class="tag" style="background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);" title="No direct announcement link — copy the ID and search it on the SFS portal">SFS Only</span>`:''}</div></div>
     <div class="card-title">${esc(cleanNYSTitle(g.title))}</div>
     <div class="card-agency">${esc(agencyFull)}</div>
@@ -1338,6 +1340,70 @@ async function openModal(id) {
       </div>`;
   }
 }
+
+// ── STATE GRANT PREVIEW ───────────────────────────────────────
+const stateIndex = [];
+function fmtStateDue(raw) {
+  if (!raw) return '';
+  const time = (raw.match(/\s+(\d{1,2}:\d{2}.*)$/) || [])[1] || '';
+  const cleaned = raw.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
+  let shown = cleaned;
+  if (/\d{4}/.test(cleaned) && !/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cleaned)) {
+    const p = new Date(cleaned);
+    if (!isNaN(p.getTime())) shown = String(p.getMonth()+1).padStart(2,'0') + '/' + String(p.getDate()).padStart(2,'0') + '/' + p.getFullYear();
+  }
+  return time ? shown + ' · ' + time : shown;
+}
+function fmtStateElig(s) {
+  const L = { MUNI:'Municipalities', NFP:'Not-for-profits', OT:'Other entities' };
+  return (s || '').split(',').map(x => x.trim()).filter(Boolean).map(x => L[x] || x).join(', ');
+}
+function openStateModal(i) {
+  const g = stateIndex[i]; if (!g) return;
+  const isAgency = g._type === 'agency';
+  const closed = isAgency ? isAgencyGrantClosed(g) : /closed/i.test(g.status || '');
+  const advertised = /advertised/i.test(g.status || '');
+  const sc = advertised ? 'tag-advertised' : closed ? 'tag-closed' : 'tag-posted';
+  const statusText = closed && isAgency ? 'Closed' : (g.status || (closed ? 'Closed' : 'Available'));
+  let badge, badgeStyle, agencyFull, idText;
+  if (isAgency) {
+    badge = g.source || 'Agency'; badgeStyle = ({ 'EFC':'background:#0f5132;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','HCR':'background:#1e3a5f;color:#fff;','DASNY':'background:#3b0764;color:#fff;','Manual':'background:var(--manual);color:#fff;' })[badge] || 'background:var(--text-mid);color:#fff;';
+    agencyFull = g.agency || ''; idText = '';
+  } else {
+    badge = NYS_AGENCY_LABELS[g.agency] || g.agency || 'NYS'; badgeStyle = NYS_AGENCY_COLORS[g.agency] || 'background:var(--nys);color:#fff;';
+    agencyFull = NYS_AGENCY_NAMES[g.agency] || g.agency || 'New York State';
+    idText = g.id && !String(g.id).startsWith('nys-') ? String(g.id) : '';
+  }
+  const rawLink = g.link || g.url || '';
+  const sfsOnly = !isAgency && (!rawLink || rawLink.includes('esupplier.sfs.ny.gov') || rawLink.includes('nyscr.ny.gov'));
+  const href = rawLink.includes('nyscr.ny.gov') ? 'https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL' : (rawLink || 'https://grantsmanagement.ny.gov/search-funding-sfs');
+  const due = /rolling/i.test(g.dueDate || '') ? 'Rolling' : (fmtStateDue(g.dueDate) || (closed ? 'No fixed deadline listed' : 'Rolling / no deadline listed'));
+  const areas = (g.serviceArea || '').split(',').map(s => s.trim()).filter(Boolean);
+  const elig = isAgency ? fmtStateElig(g.eligibility) : (g.eligibility || '');
+  const row = (k, v) => `<div class="modal-row"><span class="modal-key">${k}</span><span class="modal-val">${esc(v)}</span></div>`;
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-tag-row"><span class="tag" style="${badgeStyle}">${esc(badge)}</span><span class="tag ${sc}">${esc(advertised ? 'Advertised in SFS' : statusText)}</span>${sfsOnly ? '<span class="tag" style="background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);">SFS Only</span>' : ''}</div>
+    <div class="modal-title">${esc(isAgency ? g.title : cleanNYSTitle(g.title))}</div>
+    <div class="modal-agency">${esc(agencyFull)}${idText ? ' · ID ' + esc(idText) : ''}</div>
+    <div class="modal-grid">
+      <div class="modal-section" style="grid-column:1/-1;"><div class="modal-section-title">At a glance</div>
+        ${row('Status', advertised ? 'Advertised in SFS' : statusText)}
+        ${row('Closes', due)}
+        ${g.award ? row('Award', g.award) : ''}
+        ${row('Source', isAgency ? (g.source || 'Agency') : 'NYS Statewide Financial System (SFS)')}
+      </div>
+    </div>
+    ${g.description ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Description</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;max-height:160px;overflow-y:auto;">${esc(g.description)}</div></div>` : ''}
+    ${areas.length ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Service areas</div><div class="modal-tag-row" style="margin:6px 0 0;">${areas.map(a => `<span class="tag" style="background:var(--surface-alt);color:var(--text-mid);border:1px solid var(--border);">${esc(a)}</span>`).join('')}</div></div>` : ''}
+    ${elig ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Eligibility</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${esc(elig)}</div></div>` : ''}
+    ${sfsOnly ? `<div style="font-size:11.5px;color:var(--text-mid);margin-bottom:12px;">No direct announcement link is available. Copy the ID, open the SFS portal, paste it into the EVENT ID field and search.</div>` : ''}
+    <div class="modal-actions">
+      <a class="btn-primary" href="${esc(href)}" target="_blank" rel="noopener">${sfsOnly ? 'Open SFS portal' : 'View program page'} →</a>
+      ${sfsOnly && idText ? `<button class="btn-primary" style="background:var(--surface-alt);color:var(--text-mid);border:1px solid var(--border);" onclick="copyId('${esc(idText)}',this)">Copy ID</button>` : ''}
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
 function closeModal(e) { if (e.target===document.getElementById('modal-overlay')) closeModalDirect(); }
 function closeModalDirect() { document.getElementById('modal-overlay').classList.remove('open'); }
 function toggleSaveModal(id) {
