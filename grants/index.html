@@ -1199,7 +1199,13 @@ function renderAgencyCard(g) {
       if (!isNaN(parsed.getTime())) {
         const days = Math.round((parsed - today) / 86400000);
         const cls = days < 0 ? '' : days <= 14 ? 'urgent' : '';
-        const label = days < 0 ? 'Closed · ' + cleaned : days === 0 ? 'Closes today' : days === 1 ? 'Closes tomorrow' : 'Closes in ' + days + ' days · ' + cleaned;
+        // Show every date as MM/DD/YYYY, even when a scraper stored it as text like "November 4, 2026".
+        // Dates without a year (e.g. "April 15") are shown exactly as written.
+        let shown = cleaned;
+        if (/\d{4}/.test(cleaned) && !/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cleaned)) {
+          shown = String(parsed.getMonth()+1).padStart(2,'0') + '/' + String(parsed.getDate()).padStart(2,'0') + '/' + parsed.getFullYear();
+        }
+        const label = days < 0 ? 'Closed · ' + shown : days === 0 ? 'Closes today' : days === 1 ? 'Closes tomorrow' : 'Closes in ' + days + ' days · ' + shown;
         dl = `<span class="deadline-row ${cls}">⏱ ${esc(label)}</span>`;
       } else { dl = `<span class="deadline-row">⏱ ${esc(g.dueDate.slice(0, 80))}</span>`; }
     }
@@ -1403,7 +1409,7 @@ function showError(msg){document.getElementById('grants-grid').innerHTML=`<div c
 // ── GOOGLE SHEET (PRIMARY DATA SOURCE) ──────────────────────────────────────
 // Paste the sheet's "Publish to web > CSV" link here. The sheet is the source of truth;
 // while this is empty (or the sheet is unreachable) the dashboard falls back to the JSON files.
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTouTYseUvmlQGedoRwBCje0o2ESEM5HIzIK-QWLuFCKY_kMSgaj4wcK9WLFHbrVDuoeidIMvwTR54l/pub?gid=706584944&single=true&output=csv';
+const SHEET_CSV_URL = '';
 let sheetRows = null;   // null = no sheet; otherwise array of row objects keyed by header
 
 function parseCSV(text) {
@@ -1459,7 +1465,12 @@ function sheetToGrants() {
 async function loadGrantData() {
   await sheetPromise;
   if (sheetRows) { sheetToGrants(); buildAgencyFilter(); renderGrants(); return; }
-  fetchNYSGrants(); fetchAgencyGrants();
+  await Promise.all([fetchNYSGrants(), fetchAgencyGrants()]);
+  if (!(state.nysGrants||[]).length && !(state.agencyGrants||[]).length && !state.jsonManualGrants.length) {
+    const why = SHEET_CSV_URL ? 'The Google Sheet could not be read, and the JSON files were not found next to this page.'
+                              : 'No Google Sheet link is set (SHEET_CSV_URL), and the JSON files were not found next to this page.';
+    document.getElementById('grants-grid').innerHTML = `<div class="error-state"><div style="font-size:24px;">⚠️</div><div class="error-msg">Could not load grants.<br><small>${esc(why)}</small></div></div>`;
+  }
 }
 
 async function fetchNYSGrants(){
