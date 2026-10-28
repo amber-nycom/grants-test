@@ -1373,6 +1373,10 @@ function parseSpecial(s) {
     return { k: 'Note', v: line };
   }).filter(x => x.v);
 }
+// Escapes text, then turns [words](https://link) into a real link. Only http(s) links are allowed.
+function linkify(s) {
+  return esc(s).replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:var(--blue);">$1</a>');
+}
 function fmtStateElig(s) {
   const L = { MUNI:'Municipalities', NFP:'Not-for-profits', OT:'Other entities' };
   return (s || '').split(',').map(x => x.trim()).filter(Boolean).map(x => L[x] || x).join(', ');
@@ -1399,6 +1403,7 @@ function openStateModal(i) {
   const due = /rolling/i.test(g.dueDate || '') ? 'Rolling' : (fmtStateDue(g.dueDate) || (closed ? 'No fixed deadline listed' : 'Rolling / no deadline listed'));
   const areas = (g.serviceArea || '').split(',').map(s => s.trim()).filter(Boolean);
   const elig = isAgency ? fmtStateElig(g.eligibility) : (g.eligibility || '');
+  const special = parseSpecial(g.special);
   const row = (k, v) => `<div class="modal-row"><span class="modal-key">${k}</span><span class="modal-val">${esc(v)}</span></div>`;
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-tag-row"><span class="tag" style="${badgeStyle}">${esc(badge)}</span><span class="tag ${sc}">${esc(advertised ? 'Advertised in SFS' : statusText)}</span>${sfsOnly ? '<span class="tag" style="background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);">SFS Only</span>' : ''}</div>
@@ -1412,10 +1417,11 @@ function openStateModal(i) {
         ${g.awardDate ? row('Anticipated award date', g.awardDate) : ''}
         ${g.questionsDue ? row('Questions due', g.questionsDue) : ''}
         ${g.loi ? row('Letter of intent due', g.loi) : ''}
-        ${parseSpecial(g.special).map(x => row(x.k, x.v)).join('')}
+        ${special.filter(x => x.v.length <= 70).map(x => `<div class="modal-row"><span class="modal-key">${esc(x.k)}</span><span class="modal-val">${linkify(x.v)}</span></div>`).join('')}
         ${!isAgency && idText ? row('SFS ID', idText) : ''}
       </div>
     </div>
+    ${special.filter(x => x.v.length > 70).map(x => `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">${esc(x.k)}</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${linkify(x.v)}</div></div>`).join('')}
     ${g.description ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Description</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;max-height:160px;overflow-y:auto;">${esc(g.description)}</div></div>` : ''}
     ${g.conference ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Bidder's conference / workshop</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${esc(g.conference)}</div></div>` : ''}
     ${areas.length ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Service areas</div><div class="modal-tag-row" style="margin:6px 0 0;">${areas.map(a => `<span class="tag" style="background:var(--surface-alt);color:var(--text-mid);border:1px solid var(--border);">${esc(a)}</span>`).join('')}</div></div>` : ''}
