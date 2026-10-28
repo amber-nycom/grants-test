@@ -1043,20 +1043,26 @@ function toggleCFA() {
 // explicit status field with the due date, so a manually-entered grant
 // with status:"Available" still reads as Closed once its date passes,
 // instead of relying on someone remembering to edit the JSON by hand.
+// Due date -> local-midnight Date, or null if it isn't a clear date with a year (e.g. "Rolling", "April 15").
+function parseDueLocal(raw) {
+  if (!raw || /rolling/i.test(raw)) return null;
+  const cleaned = raw.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
+  const m = cleaned.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) return new Date(+m[3], +m[1] - 1, +m[2]);
+  if (!/\d{4}/.test(cleaned)) return null;
+  const d = new Date(cleaned);
+  return isNaN(d.getTime()) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+// True once the due date is before today (the due date itself still counts as open).
+function dueDatePassed(g) {
+  const d = parseDueLocal(g.dueDate);
+  const today = new Date(); today.setHours(0,0,0,0);
+  return !!d && d < today;
+}
 function isAgencyGrantClosed(g) {
   const s = (g.status||'').toLowerCase();
   if (s.includes('closed') || s.includes('unavailable')) return true;
-  if (g.dueDate) {
-    const dueLower = g.dueDate.toLowerCase();
-    if (!dueLower.includes('rolling')) {
-      const cleaned = g.dueDate.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
-      const normalized = cleaned.replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, '$3-$1-$2');
-      const parsed = new Date(normalized);
-      const today = new Date(); today.setHours(0,0,0,0);
-      if (!isNaN(parsed.getTime()) && parsed < today) return true;
-    }
-  }
-  return false;
+  return dueDatePassed(g);
 }
 
 function renderGrants() {
@@ -1094,9 +1100,10 @@ function renderGrants() {
 
   const nysVisible = filteredNYS.filter(g => {
     const s = (g.status||'').toLowerCase();
-    const isOpen = s.includes('available') || s.includes('open');
-    const isAdvertised = s.includes('advertised');
-    const isClosed = s.includes('closed');
+    const past = dueDatePassed(g);   // SFS grants close automatically once the due date passes
+    const isOpen = !past && (s.includes('available') || s.includes('open'));
+    const isAdvertised = !past && s.includes('advertised');
+    const isClosed = past || s.includes('closed');
     if (isClosed && !state.statuses.includes('closed')) return false;
     if (isAdvertised && !state.statuses.includes('posted')) return false;
     if (isOpen && !state.statuses.includes('posted')) return false;
@@ -1226,10 +1233,11 @@ function renderAgencyCard(g) {
 
 function renderNYSCard(g) {
   const statusLower = (g.status||'').toLowerCase();
-  const isAdvertised = statusLower.includes('advertised');
-  const isAvailable  = statusLower.includes('available') || statusLower.includes('open');
+  const isPast = dueDatePassed(g);
+  const isAdvertised = !isPast && statusLower.includes('advertised');
+  const isAvailable  = !isPast && (statusLower.includes('available') || statusLower.includes('open'));
   const sc = isAdvertised ? 'tag-advertised' : isAvailable ? 'tag-posted' : 'tag-closed';
-  const statusLabel = isAdvertised ? 'Advertised in SFS' : isAvailable ? (g.status || 'Available') : (g.status || 'Closed');
+  const statusLabel = isAdvertised ? 'Advertised in SFS' : isAvailable ? (g.status || 'Available') : (isPast ? 'Closed' : (g.status || 'Closed'));
   let dl = '';
   if (g.dueDate) {
     const cleaned = g.dueDate.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
@@ -1361,10 +1369,10 @@ function fmtStateElig(s) {
 function openStateModal(i) {
   const g = stateIndex[i]; if (!g) return;
   const isAgency = g._type === 'agency';
-  const closed = isAgency ? isAgencyGrantClosed(g) : /closed/i.test(g.status || '');
-  const advertised = /advertised/i.test(g.status || '');
+  const closed = isAgency ? isAgencyGrantClosed(g) : (dueDatePassed(g) || /closed/i.test(g.status || ''));
+  const advertised = !closed && /advertised/i.test(g.status || '');
   const sc = advertised ? 'tag-advertised' : closed ? 'tag-closed' : 'tag-posted';
-  const statusText = closed && isAgency ? 'Closed' : (g.status || (closed ? 'Closed' : 'Available'));
+  const statusText = closed ? 'Closed' : (g.status || 'Available');
   let badge, badgeStyle, agencyFull, idText;
   if (isAgency) {
     badge = g.source || 'Agency'; badgeStyle = ({ 'EFC':'background:#0f5132;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','HCR':'background:#1e3a5f;color:#fff;','DASNY':'background:#3b0764;color:#fff;','Manual':'background:var(--manual);color:#fff;' })[badge] || 'background:var(--text-mid);color:#fff;';
@@ -1480,7 +1488,7 @@ function showError(msg){document.getElementById('grants-grid').innerHTML=`<div c
 // ── GOOGLE SHEET (PRIMARY DATA SOURCE) ──────────────────────────────────────
 // Paste the sheet's "Publish to web > CSV" link here. The sheet is the source of truth;
 // while this is empty (or the sheet is unreachable) the dashboard falls back to the JSON files.
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTouTYseUvmlQGedoRwBCje0o2ESEM5HIzIK-QWLuFCKY_kMSgaj4wcK9WLFHbrVDuoeidIMvwTR54l/pub?gid=706584944&single=true&output=csv';
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTouTYseUvmlQGedoRwBCje0o2ESEM5HIzIK-QWLuFCKY_kMSgaj4wcK9WLFHbrVDuoeidIMvwTR54l/pubhtml?gid=706584944&single=true';
 let sheetRows = null;   // null = no sheet; otherwise array of row objects keyed by header
 
 function parseCSV(text) {
@@ -1528,7 +1536,7 @@ function sheetToGrants() {
     if (!src || src === 'Manual') {
       src = Object.keys(SOURCE_TO_AGENCY).find(k => (SOURCE_DISPLAY_NAMES[k] || NYS_AGENCY_NAMES[SOURCE_TO_AGENCY[k]] || k) === r.agency) || 'Manual';
     }
-    agency.push({ ...base, agency: r.agency, description: r.description, source: src, manual: r.source === 'Manual' || undefined });
+    agency.push({ ...base, agency: r.agency, description: r.description, serviceArea: r.category, source: src, manual: r.source === 'Manual' || undefined });
   });
   state.nysGrants = nys; state.jsonManualGrants = []; state.agencyGrants = agency;
 }
