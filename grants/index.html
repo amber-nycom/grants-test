@@ -1389,11 +1389,15 @@ function openStateModal(i) {
       <div class="modal-section" style="grid-column:1/-1;"><div class="modal-section-title">At a glance</div>
         ${row('Status', advertised ? 'Advertised in SFS' : statusText)}
         ${row('Closes', due)}
-        ${g.award ? row('Award', g.award) : ''}
-        ${row('Source', isAgency ? (g.source || 'Agency') : 'NYS Statewide Financial System (SFS)')}
+        ${g.award ? row('Total funding available', g.award) : ''}
+        ${g.awardDate ? row('Anticipated award date', g.awardDate) : ''}
+        ${g.questionsDue ? row('Questions due', g.questionsDue) : ''}
+        ${g.loi ? row('Letter of intent due', g.loi) : ''}
+        ${!isAgency && idText ? row('SFS ID', idText) : ''}
       </div>
     </div>
     ${g.description ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Description</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;max-height:160px;overflow-y:auto;">${esc(g.description)}</div></div>` : ''}
+    ${g.conference ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Bidder's conference / workshop</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${esc(g.conference)}</div></div>` : ''}
     ${areas.length ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Service areas</div><div class="modal-tag-row" style="margin:6px 0 0;">${areas.map(a => `<span class="tag" style="background:var(--surface-alt);color:var(--text-mid);border:1px solid var(--border);">${esc(a)}</span>`).join('')}</div></div>` : ''}
     ${elig ? `<div class="modal-section" style="margin-bottom:14px;"><div class="modal-section-title">Eligibility</div><div style="font-size:12px;color:var(--text-mid);line-height:1.6;margin-top:6px;">${esc(elig)}</div></div>` : ''}
     ${sfsOnly ? `<div style="font-size:11.5px;color:var(--text-mid);margin-bottom:12px;">No direct announcement link is available. Copy the ID, open the SFS portal, paste it into the EVENT ID field and search.</div>` : ''}
@@ -1512,7 +1516,8 @@ function sheetToGrants() {
   const nys = [], agency = [];
   sheetRows.forEach(r => {
     if (!r.id || !r.title || yes(r.hide)) return;
-    const base = { id: r.id, title: r.title, link: r.link, dueDate: r.dueDate, status: r.status, eligibility: r.eligibility };
+    const base = { id: r.id, title: r.title, link: r.link, dueDate: r.dueDate, status: r.status, eligibility: r.eligibility,
+      award: r.award, awardDate: r.awardDate, questionsDue: r.questionsDue, conference: r.conference, loi: r.loi };
     if (r.source === 'SFS' || r.source === 'NYS') {
       nys.push({ ...base, agency: codeByName[r.agency] || r.agency, serviceArea: r.category, source: 'NYS' });
       return;
