@@ -1409,7 +1409,7 @@ function showError(msg){document.getElementById('grants-grid').innerHTML=`<div c
 // ── GOOGLE SHEET (PRIMARY DATA SOURCE) ──────────────────────────────────────
 // Paste the sheet's "Publish to web > CSV" link here. The sheet is the source of truth;
 // while this is empty (or the sheet is unreachable) the dashboard falls back to the JSON files.
-const SHEET_CSV_URL = '';
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1g1OQfQr0xc10PyM1dw8VBg-rAoMrSVrBFqi85k1m0rI/edit?gid=706584944#gid=706584944';
 let sheetRows = null;   // null = no sheet; otherwise array of row objects keyed by header
 
 function parseCSV(text) {
