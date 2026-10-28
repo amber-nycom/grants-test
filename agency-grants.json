@@ -31,22 +31,94 @@
       "source": "EFC"
     },
     {
-      "id": "dasny-new-york-places-for-learning--",
-      "title": "New York Places for Learning, Activity and Youth Socialization - (NY PLAYS)",
-      "agency": "DASNY",
-      "status": "Available",
+      "id": "parks-environmental-protection-fund",
+      "title": "Environmental Protection Fund",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Closed",
       "dueDate": "",
-      "link": "https://www.dasny.org/sites/default/files/inline-files/NY%20PLAYS%20RecipientList_0.pdf",
-      "source": "DASNY"
+      "link": "https://parks.ny.gov/grants/environmental-protection-fund",
+      "source": "NYS Parks"
     },
     {
-      "id": "dasny-rfa-announcement",
-      "title": "RFA Announcement",
-      "agency": "DASNY",
+      "id": "parks-municipal-parks-and-recreation-grant",
+      "title": "Municipal Parks and Recreation Grant",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
       "status": "Available",
       "dueDate": "",
-      "link": "https://www.dasny.org/sites/default/files/inline-files/NY%20PLAYS%20RFA.pdf",
-      "source": "DASNY"
+      "link": "https://parks.ny.gov/grants/municipal-parks-recreation-grant",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-recreational-trails-program",
+      "title": "Recreational Trails Program",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Available",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/grants/recreational-trails-program",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-african-american-heritage-grant",
+      "title": "African American Heritage Grant",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Closed",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/grants/african-american-heritage-grant",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-lwcf-outdoor-recreation-legacy-partnersh",
+      "title": "LWCF Outdoor Recreation Legacy Partnership Program",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Closed",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/grants/lwcf-outdoor-recreation-legacy-partnership-program",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-boating-infrastructure-grant-program",
+      "title": "Boating Infrastructure Grant Program",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Closed",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/grants/boating-infrastructure-grant-program",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-maritime-heritage-subgrant-program",
+      "title": "Maritime Heritage Subgrant Program",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Closed",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/grants/maritime-heritage-subgrant-program",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-zbga-capital-grant-program",
+      "title": "ZBGA Capital Grant Program",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Closed",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/grants/zbga-capital-grant-program",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-zbga-operational-support-grant-program",
+      "title": "ZBGA Operational Support Grant Program",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Closed",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/grants/zoos-botanical-gardens-aquaria-operational-support-grant-program",
+      "source": "NYS Parks"
+    },
+    {
+      "id": "parks-snowmobile-trail-grant-program",
+      "title": "Snowmobile Trail Grant Program",
+      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "status": "Available",
+      "dueDate": "",
+      "link": "https://parks.ny.gov/activities/snowmobiling/snowmobile-grant-program",
+      "source": "NYS Parks"
     },
     {
       "id": "dec-municipal-waste-reduction--recycling",
@@ -275,31 +347,9 @@
       "title": "ZBGA Operational Support Grant",
       "agency": "NYS Office of Parks, Recreation & Historic Preservation",
       "status": "Closed",
-      "dueDate": "July 17, 2026",
+      "dueDate": "07/17/2026",
       "description": "Funding for collections care or special projects at municipal or not-for-profit zoos, botanical gardens, and aquaria.",
       "link": "https://parks.ny.gov/grants/zoos-botanical-gardens-aquaria-operational-support-grant-program",
-      "source": "NYS Parks",
-      "manual": true
-    },
-    {
-      "id": "parks-lwcf-orlp",
-      "title": "LWCF Outdoor Recreation Legacy Partnership Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Available",
-      "dueDate": "October 1, 2026",
-      "description": "Federal, nation-wide, urban-focused grant program targeted at creating or reinvigorating parks and outdoor recreation spaces.",
-      "link": "https://parks.ny.gov/grants/lwcf-outdoor-recreation-legacy-partnership-program",
-      "source": "NYS Parks",
-      "manual": true
-    },
-    {
-      "id": "parks-snowmobile-trail",
-      "title": "Snowmobile Trail Grant Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Available",
-      "dueDate": "",
-      "description": "Allocates funds to local governments for development and maintenance of snowmobile trails. Three phases per year (see program page for current phase deadline).",
-      "link": "https://parks.ny.gov/activities/snowmobiling/snowmobile-grant-program",
       "source": "NYS Parks",
       "manual": true
     },
@@ -308,20 +358,129 @@
       "title": "NYS HOME Program",
       "agency": "NYS Homes & Community Renewal",
       "status": "Available",
-      "dueDate": "September 17, 2026 4:00 PM",
+      "dueDate": "09/17/2026 4:00 PM",
       "description": "Funding for affordable housing development, down payment assistance, and rehabilitation for municipalities and nonprofits. 2026 Local Funding Round is open via CDOL.",
       "link": "https://hcr.ny.gov/community-development-block-grant#funding-round-materials",
       "source": "HCR",
       "manual": true
+    },
+    {
+      "id": "nyserda-municipal-permitting-modernization",
+      "title": "Municipal Permitting Modernization Program (PON 5862)",
+      "agency": "NYSERDA",
+      "status": "Available",
+      "dueDate": "12/31/2026 3:00 PM",
+      "description": "$7.5 million available. Provides NYS municipalities (cities, towns, villages, counties) two years of no-cost access to Citizenserve, a software platform for building permitting, planning/zoning, code enforcement, and licensing. First-come, first-served; closes when funds are exhausted or by the deadline, whichever comes first.",
+      "link": "https://portal.nyserda.ny.gov/CORE_Solicitation_Detail_Page?SolicitationId=a0rcr00001CXCB6AAP",
+      "source": "NYSERDA",
+      "manual": true
+    },
+    {
+      "id": "nyserda-charge-ready-ny-2",
+      "title": "Charge Ready NY 2.0 (PON 5367)",
+      "agency": "NYSERDA",
+      "status": "Available",
+      "dueDate": "12/31/2026 3:00 PM",
+      "description": "$12 million available. Incentives for installing Level 2 EV charging equipment at workplaces and multi-unit dwellings — $3,000 per port ($4,000 in Disadvantaged Communities). Municipalities, school districts, and other local government entities are eligible Equipment Owners. First-come, first-served; closes when funds are exhausted or by the deadline, whichever comes first.",
+      "link": "https://portal.nyserda.ny.gov/CORE_Solicitation_Detail_Page?SolicitationId=a0r8z000000CVOdAAO",
+      "source": "NYSERDA",
+      "manual": true
+    },
+    {
+      "id": "nyserda-charge-ready-large-public-sector",
+      "title": "Charge Ready NY – Large Public Sector Project Program (PON 6141)",
+      "agency": "NYSERDA",
+      "status": "Available",
+      "dueDate": "10/20/2026 3:00 PM",
+      "description": "$35 million available ($1M–$15M per award). Competitive proposal program for public sector and government entities to develop large portfolios of public Level 2 EV charging sites. Requires minimum 20% cost share. Unlike the other Charge Ready programs, this is a competitive proposal with a hard deadline, not first-come-first-served.",
+      "link": "https://portal.nyserda.ny.gov/CORE_Solicitation_Detail_Page?SolicitationId=a0rcr00001AchJOAAZ",
+      "source": "NYSERDA",
+      "manual": true
+    },
+    {
+      "id": "hcr-plus-one-adu-round-4",
+      "title": "Plus One ADU Program (Round 4)",
+      "agency": "NYS Homes & Community Renewal",
+      "status": "Available",
+      "dueDate": "09/03/2026",
+      "description": "$12 million available. Grants to units of local government or non-profit housing organizations to administer local Accessory Dwelling Unit (ADU) creation/improvement programs for low- and moderate-income homeowners. Up to $125,000/unit ($175,000 in NYC). Applications are actually accepted on a rolling basis until funds are committed — 09/03/2026 is the priority-consideration cutoff, not a hard close, shown here as the practical deadline for now. Update this entry when a later round replaces Round 4.",
+      "link": "https://hcr.ny.gov/plus-one-adu-rfp-rd-4",
+      "source": "HCR",
+      "manual": true
+    },
+    {
+      "id": "hcr-cdbg-housing",
+      "title": "CDBG Housing (2026)",
+      "agency": "NYS Homes & Community Renewal",
+      "status": "Available",
+      "dueDate": "09/23/2026",
+      "description": "Federal CDBG funding for eligible housing activities benefiting low- and moderate-income households, for cities/towns/villages under 50,000 population and counties under 200,000.",
+      "link": "https://hcr.ny.gov/2026-cdbg-housing-request-applications",
+      "source": "HCR",
+      "manual": true
+    },
+    {
+      "id": "hcr-cdbg-open-round",
+      "title": "CDBG Open Round (2026)",
+      "agency": "NYS Homes & Community Renewal",
+      "status": "Available",
+      "dueDate": "12/31/2026",
+      "description": "Federal CDBG funding for Public Facilities (up to $1 million), Community Planning, Microenterprise Assistance, Stand-Alone Business Assistance, and Imminent Threat activities. Subject to availability of funds.",
+      "link": "https://hcr.ny.gov/cdbg-rfa",
+      "source": "HCR",
+      "manual": true
+    },
+    {
+      "id": "hcr-cdbg-public-infrastructure",
+      "title": "CDBG Public Infrastructure (2026)",
+      "agency": "NYS Homes & Community Renewal",
+      "status": "Closed",
+      "dueDate": "",
+      "description": "2026 CFA Public Infrastructure funding round is closed. Contact the Office of Community Renewal for technical assistance on future rounds.",
+      "link": "https://hcr.ny.gov/cdbg-rfa-public-infrastructure",
+      "source": "HCR",
+      "manual": true
+    },
+    {
+      "id": "hcr-ahc-ahod-2026-27",
+      "title": "Affordable Housing Corporation – AHOD Program (2026-2027)",
+      "agency": "NYS Homes & Community Renewal",
+      "status": "Available",
+      "dueDate": "Rolling",
+      "description": "Grants up to $75,000/unit for construction, acquisition/rehabilitation, or improvement of 1-4 family owner-occupied housing. Eligible applicants: municipalities (including municipal housing authorities and HDFCs) and qualifying not-for-profits. NOFA/RFP jointly released 07/16/2026 for the 2026-2027 round; accepted until AHC's appropriated funds are exhausted — no fixed closing date given. Covers three RFP tracks: Acquisition & Rehabilitation, Home Improvement, and New Construction.",
+      "link": "https://hcr.ny.gov/ahcnofa2026-2027",
+      "source": "HCR",
+      "manual": true
+    },
+    {
+      "id": "hcr-restore-program-2026",
+      "title": "RESTORE Program (2026)",
+      "agency": "NYS Homes & Community Renewal",
+      "status": "Available",
+      "dueDate": "09/03/2026 4:00 PM",
+      "description": "$4 million available. Grants to units of local government and not-for-profits (1+ year serving the community) to act as Local Program Administrators providing emergency repair grants (up to $20,000/building) to homeowners age 60+ whose homes have hazardous conditions. Firm deadline — late applications are rejected outright, not just deprioritized.",
+      "link": "https://hcr.ny.gov/restore-program",
+      "source": "HCR",
+      "manual": true
+    },
+    {
+      "id": "dasny-new-york-building-recreational",
+      "title": "New York Building Recreational Infrastructure for Communities, Kids and Seniors - (NY BRICKS)",
+      "agency": "DASNY",
+      "status": "Available",
+      "dueDate": "12/07/2026",
+      "link": "https://www.dasny.org/about/what-we-do/grants-administration",
+      "source": "DASNY",
+      "manual": true
     }
   ],
-  "fetched": "2026-10-26T16:02:49.345Z",
-  "count": 31,
+  "fetched": "2026-10-26T15:36:52.179Z",
+  "count": 47,
   "sources": {
     "efc": 3,
-    "dasny": 2,
+    "parks": 10,
     "dec": 20,
-    "manual": 6
+    "manual": 14
   },
-  "_manualEntriesNote": "Grants 26-31 in the array above (marked \"manual\": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped."
+  "_manualEntriesNote": "Grants 34-47 in the array above (marked \"manual\": true) are hand-maintained entries (HCR always; Parks only when this run's scraper didn't return a matching title) — preserved as a fallback, superseded automatically whenever the scraper produces the same title fresh."
 }
