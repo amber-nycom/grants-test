@@ -1102,9 +1102,34 @@ function parseDueLocal(raw) {
   const cleaned = raw.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
   const m = cleaned.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (m) return new Date(+m[3], +m[1] - 1, +m[2]);
+  const iso = cleaned.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (iso) return new Date(+iso[1], +iso[2] - 1, +iso[3]);
   if (!/\d{4}/.test(cleaned)) return null;
   const d = new Date(cleaned);
   return isNaN(d.getTime()) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+// Any due date -> MM/DD/YYYY (1/1/2027, 2027-01-01 and "January 1, 2027" all become 01/01/2027).
+// Text with no year ("April 15", "Rolling") comes back unchanged.
+function fmtDueDate(raw) {
+  const d = parseDueLocal(raw);
+  if (!d) return (raw || '').replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
+  return String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getDate()).padStart(2, '0') + '/' + d.getFullYear();
+}
+// Whole days from today until the due date (0 = today, negative = past), or null if not a clear date.
+function daysLeft(raw) {
+  const d = parseDueLocal(raw);
+  if (!d) return null;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  return Math.round((d - today) / 86400000);
+}
+// The countdown line shared by every card: "Closes in 12 days · 11/09/2026".
+function deadlineHTML(raw) {
+  if (/rolling/i.test(raw || '')) return `<span class="deadline-row rolling">⟳ Rolling — check with agency for funding availability</span>`;
+  const days = daysLeft(raw);
+  if (days === null) return `<span class="deadline-row">⏱ ${esc((raw || '').slice(0, 80))}</span>`;
+  const shown = fmtDueDate(raw);
+  const label = days < 0 ? 'Closed · ' + shown : days === 0 ? 'Closes today' : days === 1 ? 'Closes tomorrow' : 'Closes in ' + days + ' days · ' + shown;
+  return `<span class="deadline-row ${days >= 0 && days <= 14 ? 'urgent' : ''}">⏱ ${esc(label)}</span>`;
 }
 // True once the due date is before today (the due date itself still counts as open).
 function dueDatePassed(g) {
@@ -1252,27 +1277,8 @@ function renderAgencyCard(g) {
   const sourceColors = { 'EFC':'background:#0f5132;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','HCR':'background:#1e3a5f;color:#fff;','DASNY':'background:#3b0764;color:#fff;', ...OG_TYPE_COLORS };
   const sourceStyle = sourceColors[g.source] || 'background:var(--text-mid);color:#fff;';
   let dl = '';
-  if (g.dueDate) {
-    const dueLower = g.dueDate.toLowerCase();
-    if (dueLower.includes('rolling')) { dl = `<span class="deadline-row rolling">⟳ Rolling — check with agency for funding availability</span>`; }
-    else {
-      const cleaned = g.dueDate.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
-      const normalized = cleaned.replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, '$3-$1-$2');
-      const parsed = new Date(normalized); const today = new Date(); today.setHours(0,0,0,0);
-      if (!isNaN(parsed.getTime())) {
-        const days = Math.round((parsed - today) / 86400000);
-        const cls = days < 0 ? '' : days <= 14 ? 'urgent' : '';
-        // Show every date as MM/DD/YYYY, even when a scraper stored it as text like "November 4, 2026".
-        // Dates without a year (e.g. "April 15") are shown exactly as written.
-        let shown = cleaned;
-        if (/\d{4}/.test(cleaned) && !/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cleaned)) {
-          shown = String(parsed.getMonth()+1).padStart(2,'0') + '/' + String(parsed.getDate()).padStart(2,'0') + '/' + parsed.getFullYear();
-        }
-        const label = days < 0 ? 'Closed · ' + shown : days === 0 ? 'Closes today' : days === 1 ? 'Closes tomorrow' : 'Closes in ' + days + ' days · ' + shown;
-        dl = `<span class="deadline-row ${cls}">⏱ ${esc(label)}</span>`;
-      } else { dl = `<span class="deadline-row">⏱ ${esc(g.dueDate.slice(0, 80))}</span>`; }
-    }
-  } else if (isClosed) { dl = `<span class="deadline-row">⏱ Closed · no fixed deadline listed</span>`; }
+  if (g.dueDate) { dl = deadlineHTML(g.dueDate); }
+  else if (isClosed) { dl = `<span class="deadline-row">⏱ Closed · no fixed deadline listed</span>`; }
   else { dl = `<span class="deadline-row rolling">⟳ No deadline listed — check with agency</span>`; }
   return `<div class="grant-card" style="${isClosed?'opacity:0.55;':''}" onclick="${g._onclick || `openStateModal(${g._i})`}">
     <div class="card-top"><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="tag" style="${sourceStyle}">${esc(g.source||'Agency')}</span><span class="tag ${sc}">${esc(isClosed?'Closed':g.status||'Available')}</span></div></div>
@@ -1292,17 +1298,8 @@ function renderNYSCard(g) {
   const sc = isAdvertised ? 'tag-advertised' : isAvailable ? 'tag-posted' : 'tag-closed';
   const statusLabel = isAdvertised ? 'Advertised in SFS' : isAvailable ? (g.status || 'Available') : (isPast ? 'Closed' : (g.status || 'Closed'));
   let dl = '';
-  if (g.dueDate) {
-    const cleaned = g.dueDate.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
-    const normalized = cleaned.replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, '$3-$1-$2');
-    const parsed = new Date(normalized); const today = new Date(); today.setHours(0,0,0,0);
-    if (!isNaN(parsed.getTime())) {
-      const days = Math.round((parsed - today) / 86400000);
-      const cls = days < 0 ? '' : days <= 14 ? 'urgent' : '';
-      const label = days < 0 ? 'Closed · ' + cleaned : days === 0 ? 'Closes today' : days === 1 ? 'Closes tomorrow' : 'Closes in ' + days + ' days · ' + cleaned;
-      dl = `<span class="deadline-row ${cls}">⏱ ${esc(label)}</span>`;
-    } else { dl = `<span class="deadline-row">⏱ ${esc(g.dueDate.slice(0, 80))}</span>`; }
-  } else if (g.award) { dl = `<span class="deadline-row rolling">◈ ${esc(g.award)}</span>`; }
+  if (g.dueDate) { dl = deadlineHTML(g.dueDate); }
+  else if (g.award) { dl = `<span class="deadline-row rolling">◈ ${esc(g.award)}</span>`; }
   else { dl = `<span class="deadline-row" style="color:var(--text-faint);">— See program page</span>`; }
   const hasId = g.id && !String(g.id).startsWith('nys-');
   const rawLink = g.link || g.url || '';
@@ -1408,11 +1405,7 @@ function fmtStateDue(raw) {
   if (!raw) return '';
   const time = (raw.match(/\s+(\d{1,2}:\d{2}.*)$/) || [])[1] || '';
   const cleaned = raw.replace(/\s+\d{1,2}:\d{2}.*$/, '').trim();
-  let shown = cleaned;
-  if (/\d{4}/.test(cleaned) && !/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(cleaned)) {
-    const p = new Date(cleaned);
-    if (!isNaN(p.getTime())) shown = String(p.getMonth()+1).padStart(2,'0') + '/' + String(p.getDate()).padStart(2,'0') + '/' + p.getFullYear();
-  }
+  const shown = fmtDueDate(raw);
   return time ? shown + ' · ' + time : shown;
 }
 // "special" column: one detail per line (Alt+Enter in the cell) or separated by |. Each is "Label: value".
