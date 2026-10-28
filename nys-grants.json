@@ -9,6 +9,11 @@
       "dueDate": "12/01/2026 4:00PM EST",
       "link": "https://agriculture.ny.gov/funding-opportunities",
       "serviceArea": "Agricultural Supports, Education Supports, Family Supports, Public Transportation Services",
+      "award": "$475,000",
+      "awardDate": "",
+      "questionsDue": "11/04/2026",
+      "conference": "agriculture.ny.gov/funding-opportunities",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -20,6 +25,11 @@
       "dueDate": "06/01/2027 4:00PM EDT",
       "link": "https://agriculture.ny.gov/rfa-0393-farmland-protection-implementation-grants-round-20-agricultural-conservation-easement",
       "serviceArea": "Agricultural Supports",
+      "award": "$67,000,000",
+      "awardDate": "03/16/2026",
+      "questionsDue": "01/09/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -31,6 +41,11 @@
       "dueDate": "01/22/2027 3:00PM EST",
       "link": "https://agriculture.ny.gov/rfp-0423-new-york-state-regional-school-food-infrastructure-grant-program",
       "serviceArea": "Agricultural Supports",
+      "award": "$10,000,000",
+      "awardDate": "",
+      "questionsDue": "12/11/2026",
+      "conference": "Refer to Link in RFP on Cover Page",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -42,6 +57,27 @@
       "dueDate": "12/02/2026 12:00PM EST",
       "link": "https://criminaljustice.ny.gov/ofpa/index.htm",
       "serviceArea": "Justice Services, Public Safety Supports",
+      "award": "$19,500,000",
+      "awardDate": "01/27/2027",
+      "questionsDue": "10/21/2026",
+      "conference": "",
+      "loi": "",
+      "source": "NYS"
+    },
+    {
+      "id": "CDD-FEN-27",
+      "agency": "DDP01",
+      "title": "Fatherhood Engagement Network RFP",
+      "status": "Advertised Only - Not in SFS",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "12/11/2026 11:59PM EST",
+      "link": "https://cdd.ny.gov/funding",
+      "serviceArea": "Education Supports, Family Supports",
+      "award": "$750,000",
+      "awardDate": "01/29/2027",
+      "questionsDue": "11/19/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -53,6 +89,11 @@
       "dueDate": "12/04/2026 11:59PM EST",
       "link": "https://cdd.ny.gov/funding",
       "serviceArea": "Health Services",
+      "award": "$450,000",
+      "awardDate": "02/10/2027",
+      "questionsDue": "11/12/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -64,6 +105,11 @@
       "dueDate": "11/30/2026 11:59PM EST",
       "link": "https://cdd.ny.gov/funding",
       "serviceArea": "Agricultural Supports, Education Supports, Environmental Supports, Family Supports, Government Supports, Health Services, Housing and Shelter Services, Justice Services, Public Safety Supports, Public Transportation Services, Workforce Development",
+      "award": "$300,000",
+      "awardDate": "12/15/2026",
+      "questionsDue": "11/12/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -75,6 +121,11 @@
       "dueDate": "12/16/2026 3:00PM EST",
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
+      "award": "$1,500,000",
+      "awardDate": "04/14/2027",
+      "questionsDue": "12/10/2026",
+      "conference": "dec.ny.gov/nature/open-space/community-forest-conservation-grant-program",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -86,6 +137,11 @@
       "dueDate": "11/04/2026 2:00PM EST",
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
+      "award": "$20,000,000",
+      "awardDate": "01/29/2027",
+      "questionsDue": "10/28/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -97,6 +153,11 @@
       "dueDate": "12/17/2026 3:00PM EST",
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
+      "award": "$400,000",
+      "awardDate": "04/16/2027",
+      "questionsDue": "12/10/2026",
+      "conference": "meetny-gov.webex.com/weblink/register/rc1316ce407c2435fe7db03f903b1e5f4",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -108,6 +169,11 @@
       "dueDate": "12/17/2026 3:00PM EST",
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
+      "award": "$250,000",
+      "awardDate": "06/15/2027",
+      "questionsDue": "12/10/2026",
+      "conference": "meetny-gov.webex.com/weblink/register/r02083b69f18128c4acbc0579f9ec1e19",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -119,6 +185,11 @@
       "dueDate": "12/17/2026 3:00PM EST",
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
+      "award": "$350,000",
+      "awardDate": "05/01/2027",
+      "questionsDue": "12/10/2026",
+      "conference": "meetny-gov.webex.com/weblink/register/rc1316ce407c2435fe7db03f903b1e5f4",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -130,6 +201,11 @@
       "dueDate": "12/17/2026 3:00PM EST",
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
+      "award": "$250,000",
+      "awardDate": "06/15/2027",
+      "questionsDue": "12/10/2026",
+      "conference": "meetny-gov.webex.com/weblink/register/r02083b69f18128c4acbc0579f9ec1e19",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -141,6 +217,11 @@
       "dueDate": "10/30/2026 3:00PM EDT",
       "link": "https://dec.ny.gov/environmental-protection/waste-management/grants",
       "serviceArea": "Environmental Supports, Government Supports",
+      "award": "$5,000,000",
+      "awardDate": "01/30/2027",
+      "questionsDue": "10/23/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -152,6 +233,11 @@
       "dueDate": "11/01/2027 3:00PM EDT",
       "link": "https://dec.ny.gov/environmental-protection/waste-management/grants",
       "serviceArea": "Environmental Supports, Government Supports",
+      "award": "$2,000,000",
+      "awardDate": "",
+      "questionsDue": "10/01/2027",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -163,6 +249,11 @@
       "dueDate": "09/28/2028 4:00PM EDT",
       "link": "https://www.health.ny.gov/funding/rfa/20171/",
       "serviceArea": "Government Supports, Health Services",
+      "award": "$2,500,000",
+      "awardDate": "06/09/2026",
+      "questionsDue": "09/25/2028",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -174,6 +265,11 @@
       "dueDate": "12/03/2026 4:00PM EST",
       "link": "https://dol.ny.gov/funding-opportunities",
       "serviceArea": "Workforce Development",
+      "award": "$7,000,000",
+      "awardDate": "05/11/2026",
+      "questionsDue": "05/15/2026",
+      "conference": "An Applicant Workshop will be held virtually on May 4, 2026, from 10:30 AM -12:00 PM to answer prospective questions.",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -185,6 +281,11 @@
       "dueDate": "12/15/2026 2:00PM EST",
       "link": "https://omh.ny.gov/omhweb/rfp/",
       "serviceArea": "Health Services",
+      "award": "$13,000,000",
+      "awardDate": "",
+      "questionsDue": "10/29/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -196,6 +297,11 @@
       "dueDate": "11/19/2026 2:00PM EST",
       "link": "https://omh.ny.gov/omhweb/rfp/",
       "serviceArea": "Health Services, Public Safety Supports",
+      "award": "$8,000,000",
+      "awardDate": "01/14/2027",
+      "questionsDue": "10/08/2026",
+      "conference": "A bidder's conference will be held on September 28th at 3:00 PM. Please see the link in the RFP to join the webex.",
+      "loi": "",
       "source": "NYS"
     },
     {
@@ -207,9 +313,14 @@
       "dueDate": "07/22/2030 5:00PM EDT",
       "link": "https://otda.ny.gov/contracts/2026/VentureVI/",
       "serviceArea": "Workforce Development",
+      "award": "$30,000,000",
+      "awardDate": "11/01/2026",
+      "questionsDue": "06/17/2026",
+      "conference": "",
+      "loi": "",
       "source": "NYS"
     }
   ],
-  "fetched": "2026-10-26T14:48:34.778Z",
-  "count": 19
+  "fetched": "2026-10-28T15:26:59.408Z",
+  "count": 20
 }
