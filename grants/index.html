@@ -1362,6 +1362,17 @@ function fmtStateDue(raw) {
   }
   return time ? shown + ' · ' + time : shown;
 }
+// "special" column: one detail per line (Alt+Enter in the cell) or separated by |. Each is "Label: value".
+function parseSpecial(s) {
+  return (s || '').split(/\r?\n|\s*\|\s*/).map(x => x.trim()).filter(Boolean).map(line => {
+    const i = line.indexOf(':');
+    if (i > 0 && i < 60 && !/^https?:/i.test(line) && !/[\/]/.test(line.slice(0, i))) {
+      const k = line.slice(0, i).trim();
+      return { k: k.charAt(0).toUpperCase() + k.slice(1), v: line.slice(i + 1).trim() };
+    }
+    return { k: 'Note', v: line };
+  }).filter(x => x.v);
+}
 function fmtStateElig(s) {
   const L = { MUNI:'Municipalities', NFP:'Not-for-profits', OT:'Other entities' };
   return (s || '').split(',').map(x => x.trim()).filter(Boolean).map(x => L[x] || x).join(', ');
@@ -1401,6 +1412,7 @@ function openStateModal(i) {
         ${g.awardDate ? row('Anticipated award date', g.awardDate) : ''}
         ${g.questionsDue ? row('Questions due', g.questionsDue) : ''}
         ${g.loi ? row('Letter of intent due', g.loi) : ''}
+        ${parseSpecial(g.special).map(x => row(x.k, x.v)).join('')}
         ${!isAgency && idText ? row('SFS ID', idText) : ''}
       </div>
     </div>
@@ -1488,7 +1500,7 @@ function showError(msg){document.getElementById('grants-grid').innerHTML=`<div c
 // ── GOOGLE SHEET (PRIMARY DATA SOURCE) ──────────────────────────────────────
 // Paste the sheet's "Publish to web > CSV" link here. The sheet is the source of truth;
 // while this is empty (or the sheet is unreachable) the dashboard falls back to the JSON files.
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTouTYseUvmlQGedoRwBCje0o2ESEM5HIzIK-QWLuFCKY_kMSgaj4wcK9WLFHbrVDuoeidIMvwTR54l/pubhtml?gid=706584944&single=true';
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTouTYseUvmlQGedoRwBCje0o2ESEM5HIzIK-QWLuFCKY_kMSgaj4wcK9WLFHbrVDuoeidIMvwTR54l/pub?gid=706584944&single=true&output=csv';
 let sheetRows = null;   // null = no sheet; otherwise array of row objects keyed by header
 
 function parseCSV(text) {
@@ -1525,7 +1537,7 @@ function sheetToGrants() {
   sheetRows.forEach(r => {
     if (!r.id || !r.title || yes(r.hide)) return;
     const base = { id: r.id, title: r.title, link: r.link, dueDate: r.dueDate, status: r.status, eligibility: r.eligibility,
-      award: r.award, awardDate: r.awardDate, questionsDue: r.questionsDue, conference: r.conference, loi: r.loi };
+      award: r.award, awardDate: r.awardDate, questionsDue: r.questionsDue, conference: r.conference, loi: r.loi, special: r.special };
     if (r.source === 'SFS' || r.source === 'NYS') {
       nys.push({ ...base, agency: codeByName[r.agency] || r.agency, serviceArea: r.category, source: 'NYS' });
       return;
