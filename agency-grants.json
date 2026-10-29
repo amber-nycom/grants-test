@@ -31,94 +31,22 @@
       "source": "EFC"
     },
     {
-      "id": "parks-environmental-protection-fund",
-      "title": "Environmental Protection Fund",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Closed",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/grants/environmental-protection-fund",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-municipal-parks-and-recreation-grant",
-      "title": "Municipal Parks and Recreation Grant",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "id": "dasny-new-york-places-for-learning--",
+      "title": "New York Places for Learning, Activity and Youth Socialization - (NY PLAYS)",
+      "agency": "DASNY",
       "status": "Available",
       "dueDate": "",
-      "link": "https://parks.ny.gov/grants/municipal-parks-recreation-grant",
-      "source": "NYS Parks"
+      "link": "https://www.dasny.org/sites/default/files/inline-files/NY%20PLAYS%20RecipientList_0.pdf",
+      "source": "DASNY"
     },
     {
-      "id": "parks-recreational-trails-program",
-      "title": "Recreational Trails Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
+      "id": "dasny-rfa-announcement",
+      "title": "RFA Announcement",
+      "agency": "DASNY",
       "status": "Available",
       "dueDate": "",
-      "link": "https://parks.ny.gov/grants/recreational-trails-program",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-african-american-heritage-grant",
-      "title": "African American Heritage Grant",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Closed",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/grants/african-american-heritage-grant",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-lwcf-outdoor-recreation-legacy-partnersh",
-      "title": "LWCF Outdoor Recreation Legacy Partnership Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Closed",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/grants/lwcf-outdoor-recreation-legacy-partnership-program",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-boating-infrastructure-grant-program",
-      "title": "Boating Infrastructure Grant Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Closed",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/grants/boating-infrastructure-grant-program",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-maritime-heritage-subgrant-program",
-      "title": "Maritime Heritage Subgrant Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Closed",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/grants/maritime-heritage-subgrant-program",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-zbga-capital-grant-program",
-      "title": "ZBGA Capital Grant Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Closed",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/grants/zbga-capital-grant-program",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-zbga-operational-support-grant-program",
-      "title": "ZBGA Operational Support Grant Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Closed",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/grants/zoos-botanical-gardens-aquaria-operational-support-grant-program",
-      "source": "NYS Parks"
-    },
-    {
-      "id": "parks-snowmobile-trail-grant-program",
-      "title": "Snowmobile Trail Grant Program",
-      "agency": "NYS Office of Parks, Recreation & Historic Preservation",
-      "status": "Available",
-      "dueDate": "",
-      "link": "https://parks.ny.gov/activities/snowmobiling/snowmobile-grant-program",
-      "source": "NYS Parks"
+      "link": "https://www.dasny.org/sites/default/files/inline-files/NY%20PLAYS%20RFA.pdf",
+      "source": "DASNY"
     },
     {
       "id": "dec-municipal-waste-reduction--recycling",
@@ -474,13 +402,13 @@
       "manual": true
     }
   ],
-  "fetched": "2026-10-26T15:36:52.179Z",
-  "count": 47,
+  "fetched": "2026-10-29T15:59:20.526Z",
+  "count": 39,
   "sources": {
     "efc": 3,
-    "parks": 10,
+    "dasny": 2,
     "dec": 20,
     "manual": 14
   },
-  "_manualEntriesNote": "Grants 34-47 in the array above (marked \"manual\": true) are hand-maintained entries (HCR always; Parks only when this run's scraper didn't return a matching title) — preserved as a fallback, superseded automatically whenever the scraper produces the same title fresh."
+  "_manualEntriesNote": "Grants 26-39 in the array above (marked \"manual\": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped."
 }
