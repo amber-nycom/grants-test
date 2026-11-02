@@ -81,6 +81,22 @@
       "source": "NYS"
     },
     {
+      "id": "CDD-GST-27",
+      "agency": "DDP01",
+      "title": "Grief Support Toolkit for People with Developmenta",
+      "status": "Advertised Only - Not in SFS",
+      "eligibility": "Governmental Entity, Tribal Organization",
+      "dueDate": "12/18/2026 11:59PM EST",
+      "link": "https://https//cdd.ny.gov/grant-opportunity-announcement-grief-support-toolkit-people-developmental-disabilities",
+      "serviceArea": "Family Supports, Health Services",
+      "award": "$400,000",
+      "awardDate": "02/01/2027",
+      "questionsDue": "11/13/2026",
+      "conference": "",
+      "loi": "",
+      "source": "NYS"
+    },
+    {
       "id": "CDD-HA-27",
       "agency": "DDP01",
       "title": "Health Advocate Training",
@@ -145,6 +161,38 @@
       "source": "NYS"
     },
     {
+      "id": "FRI 2026",
+      "agency": "DEC01",
+      "title": "Food Recovery Initiatives Grant Program - 2026",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "11/02/2028 3:00PM EDT",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "award": "$2,000,000",
+      "awardDate": "01/01/2027",
+      "questionsDue": "10/27/2028",
+      "conference": "meetny-gov.webex.com/weblink/register/r81ade55f8f4d1f16d8f226f5f3941a5a",
+      "loi": "",
+      "source": "NYS"
+    },
+    {
+      "id": "FSR 2026",
+      "agency": "DEC01",
+      "title": "FSR 2026 Grant Program",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "11/02/2028 3:00PM EDT",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Environmental Supports",
+      "award": "$4,000,000",
+      "awardDate": "01/01/2027",
+      "questionsDue": "10/27/2028",
+      "conference": "meetny-gov.webex.com/weblink/register/rcad1e4b4253c2aece90e9540fb3eee4e",
+      "loi": "",
+      "source": "NYS"
+    },
+    {
       "id": "HRE50 2026",
       "agency": "DEC01",
       "title": "HRE Round 50 Tributary Restoration and Resiliency",
@@ -205,22 +253,6 @@
       "awardDate": "06/15/2027",
       "questionsDue": "12/10/2026",
       "conference": "meetny-gov.webex.com/weblink/register/r02083b69f18128c4acbc0579f9ec1e19",
-      "loi": "",
-      "source": "NYS"
-    },
-    {
-      "id": "MWRC 2026",
-      "agency": "DEC01",
-      "title": "Municipal Waste Reduction Recycling Coordination",
-      "status": "Available",
-      "eligibility": "Governmental Entity, Tribal Organization",
-      "dueDate": "10/30/2026 3:00PM EDT",
-      "link": "https://dec.ny.gov/environmental-protection/waste-management/grants",
-      "serviceArea": "Environmental Supports, Government Supports",
-      "award": "$5,000,000",
-      "awardDate": "01/30/2027",
-      "questionsDue": "10/23/2026",
-      "conference": "",
       "loi": "",
       "source": "NYS"
     },
@@ -305,6 +337,38 @@
       "source": "NYS"
     },
     {
+      "id": "MHEDU27",
+      "agency": "PRK01",
+      "title": "NYS Maritime Heritage 2027 Education",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "01/15/2027 4:00PM EST",
+      "link": "https://parks.ny.gov/grants/maritime-heritage-subgrant-program",
+      "serviceArea": "Education Supports, Environmental Supports, Government Supports, Housing and Shelter Services, Public Safety Supports, Public Transportation Services",
+      "award": "$212,500",
+      "awardDate": "",
+      "questionsDue": "01/15/2027",
+      "conference": "",
+      "loi": "",
+      "source": "NYS"
+    },
+    {
+      "id": "MHPRES27",
+      "agency": "PRK01",
+      "title": "NYS Maritime Heritage 2027 Preservation",
+      "status": "Available",
+      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
+      "dueDate": "01/15/2027 4:00PM EST",
+      "link": "https://parks.ny.gov/grants/maritime-heritage-subgrant-program",
+      "serviceArea": "Education Supports, Environmental Supports, Government Supports, Housing and Shelter Services, Public Safety Supports, Public Transportation Services",
+      "award": "$625,000",
+      "awardDate": "",
+      "questionsDue": "01/15/2027",
+      "conference": "",
+      "loi": "",
+      "source": "NYS"
+    },
+    {
       "id": "VENTURE_VI",
       "agency": "TDA01",
       "title": "Venture VI Program for SNAP Participants",
@@ -321,6 +385,6 @@
       "source": "NYS"
     }
   ],
-  "fetched": "2026-10-29T15:13:41.535Z",
-  "count": 20
+  "fetched": "2026-11-02T18:15:01.046Z",
+  "count": 24
 }
