@@ -245,7 +245,7 @@
   <nav class="nav-tabs">
     <div class="nav-tab active" onclick="switchTab('browse',this)">State Grants</div>
     <div class="nav-tab" onclick="switchTab('federal',this)">Federal Grants</div>
-    <div class="nav-tab" onclick="switchTab('other',this)">Other Grants</div>
+    <div class="nav-tab" id="nav-other" onclick="switchTab('other',this)">Other Grants</div>
     <div class="nav-tab" id="nav-resources" onclick="switchTab('resources',this)">Other Resources</div>
     <div class="nav-tab" onclick="switchTab('howto',this)">How to Use</div>
   </nav>
@@ -1838,8 +1838,11 @@ function ogMobileRegion(v) { og.region = v; renderOtherGrants(); }
 if ((window.NYCOM_CONFIG || {}).SHOW_OTHER_RESOURCES === false) {
   ['nav-resources', 'howto-resources', 'tab-resources'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
 }
+// config.js: SHOW_OTHER_GRANTS: false hides the Other Grants tab and never requests its sheet.
+const showOtherGrants = (window.NYCOM_CONFIG || {}).SHOW_OTHER_GRANTS !== false;
+if (!showOtherGrants) ['nav-other', 'tab-other'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
 loadGrantData();
-loadOtherGrants();
+if (showOtherGrants) loadOtherGrants();
 </script>
 </body>
 </html>
