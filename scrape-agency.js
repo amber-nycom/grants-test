@@ -123,11 +123,20 @@ const MONTHS = ['january','february','march','april','may','june','july','august
 // "Nov. 2, 2028" / "Sept 5 2027" / "Jan 8th, 2027" -> "November 2, 2028".
 // Anything that isn't a month-name date ("Continuous", "Closed", "04/15/2027") is returned unchanged.
 function normalizeDeadline(s) {
-  const m = String(s || '').match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s*(\d{4})?/i);
+  // Pulls the month-name date out of a cell: "Nov. 2, 2028" -> "November 2, 2028";
+  // "...due by 4 p.m. on Jan. 29." -> "January 29, 2027" (no year given: the next time that date comes around).
+  // If there's no month-name date ("Continuous", "Closed", "04/15/2027") the text is returned unchanged.
+  const m = String(s || '').match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?!\d)(?:st|nd|rd|th)?(?:,?\s*(\d{4}))?/i);
   if (!m) return s;
   const mo = MONTHS.findIndex(n => n.startsWith(m[1].toLowerCase().slice(0, 3)));
-  const full = MONTHS[mo][0].toUpperCase() + MONTHS[mo].slice(1);
-  return full + ' ' + parseInt(m[2], 10) + (m[3] ? ', ' + m[3] : '');
+  const day = parseInt(m[2], 10);
+  let year = m[3] ? parseInt(m[3], 10) : 0;
+  if (!year) {
+    const now = new Date();
+    year = now.getFullYear();
+    if (new Date(year, mo, day, 23, 59, 59) < now) year++;
+  }
+  return MONTHS[mo][0].toUpperCase() + MONTHS[mo].slice(1) + ' ' + day + ', ' + year;
 }
 
 function isPast(dateStr) {
@@ -183,14 +192,15 @@ async function scrapeEFC() {
       const title = stripHtml(lm[2]);
       const url = resolveUrl(lm[1], 'https://efc.ny.gov');
       const desc = stripHtml(cells[1]);
-      const dueDate = cells[2] ? normalizeDeadline(stripHtml(cells[2])) : '';
+      const dueRaw = cells[2] ? stripHtml(cells[2]) : '';
+      const dueDate = normalizeDeadline(dueRaw);
 
       if (isJunk(title) || seen.has(title)) continue;
       seen.add(title);
       if (desc.toLowerCase().includes('low-cost financing') || desc.toLowerCase().includes('revolving fund')) continue;
       if (isPast(dueDate)) { console.log('  EFC SKIP past: ' + title); continue; }
-      if (dueDate.toLowerCase().includes('currently closed') ||
-          dueDate.toLowerCase().includes('application period is currently closed')) {
+      if (dueRaw.toLowerCase().includes('currently closed') ||
+          dueRaw.toLowerCase().includes('application period is currently closed')) {
         console.log('  EFC SKIP closed: ' + title); continue;
       }
       // Skip programs for individuals/homeowners, not direct municipal grants
@@ -200,7 +210,7 @@ async function scrapeEFC() {
         if (titleLower.includes('septic')) { console.log('  EFC SKIP individual: ' + title); continue; }
       }
 
-      const dueLower = dueDate.toLowerCase();
+      const dueLower = dueRaw.toLowerCase();
       const efcStatus = (dueLower.includes('closed') || dueLower.includes('not available') || dueLower.includes('not accepting')) ? 'Closed' : 'Available';
       // Only keep dueDate if it contains an actual date value
       const hasDate = /\d{1,2}[\/.\-]\d{1,2}|(january|february|march|april|may|june|july|august|september|october|november|december)/i.test(dueDate);
@@ -330,8 +340,9 @@ async function scrapeDEC() {
 
       const rawUrl = lm[1];
       const url = resolveUrl(rawUrl, 'https://dec.ny.gov');
-      const deadlineRaw = normalizeDeadline(stripHtml(cells[2]).trim());
-      const deadlineLower = deadlineRaw.toLowerCase();
+      const deadlineText = stripHtml(cells[2]).trim();
+      const deadlineRaw = normalizeDeadline(deadlineText);
+      const deadlineLower = deadlineText.toLowerCase();
 
       // Determine status from deadline column
       let status = 'Available';
