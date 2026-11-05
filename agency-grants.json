@@ -11,16 +11,6 @@
       "source": "EFC"
     },
     {
-      "id": "efc-green-resiliency-grants-and-gr",
-      "title": "Green Resiliency Grants and Green Innovation Grant Program",
-      "agency": "NYS Environmental Facilities Corporation",
-      "status": "Available",
-      "dueDate": "",
-      "description": "Grants for implementing green infrastructure projects including stormwater management, water efficiency, and energy efficiency.",
-      "link": "https://efc.ny.gov/grg",
-      "source": "EFC"
-    },
-    {
       "id": "efc-clean-vessel-assistance-progra",
       "title": "Clean Vessel Assistance Program",
       "agency": "NYS Environmental Facilities Corporation",
@@ -93,7 +83,7 @@
       "title": "Wasted Food Reduction and Food Scraps Recycling Initiative",
       "agency": "NYS Department of Environmental Conservation",
       "status": "Available",
-      "dueDate": "",
+      "dueDate": "November 2, 2028",
       "eligibility": "MUNI.NFP",
       "link": "https://dec.ny.gov/environmental-protection/recycling-composting/organic-materials-management/funding-opportunities-for-organics-management",
       "source": "DEC"
@@ -103,7 +93,7 @@
       "title": "Food Recovery Initiatives",
       "agency": "NYS Department of Environmental Conservation",
       "status": "Available",
-      "dueDate": "",
+      "dueDate": "November 2, 2028",
       "eligibility": "MUNI.NFP",
       "link": "https://dec.ny.gov/environmental-protection/recycling-composting/organic-materials-management/funding-opportunities-for-organics-management",
       "source": "DEC"
@@ -259,10 +249,10 @@
       "source": "DEC"
     }
   ],
-  "fetched": "2026-11-05T07:37:24.940Z",
-  "count": 26,
+  "fetched": "2026-11-05T14:45:04.707Z",
+  "count": 25,
   "sources": {
-    "efc": 3,
+    "efc": 2,
     "dasny": 2,
     "dec": 21,
     "manual": 0
