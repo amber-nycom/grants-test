@@ -118,6 +118,17 @@ function resolveUrl(href, base) {
   try { return new URL(href, base).href; } catch { return null; }
 }
 
+const MONTHS = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+// "Nov. 2, 2028" / "Sept 5 2027" / "Jan 8th, 2027" -> "November 2, 2028".
+// Anything that isn't a month-name date ("Continuous", "Closed", "04/15/2027") is returned unchanged.
+function normalizeDeadline(s) {
+  const m = String(s || '').match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s*(\d{4})?/i);
+  if (!m) return s;
+  const mo = MONTHS.findIndex(n => n.startsWith(m[1].toLowerCase().slice(0, 3)));
+  const full = MONTHS[mo][0].toUpperCase() + MONTHS[mo].slice(1);
+  return full + ' ' + parseInt(m[2], 10) + (m[3] ? ', ' + m[3] : '');
+}
+
 function isPast(dateStr) {
   if (!dateStr) return false;
   const s = dateStr.toLowerCase();
@@ -171,7 +182,7 @@ async function scrapeEFC() {
       const title = stripHtml(lm[2]);
       const url = resolveUrl(lm[1], 'https://efc.ny.gov');
       const desc = stripHtml(cells[1]);
-      const dueDate = cells[2] ? stripHtml(cells[2]) : '';
+      const dueDate = cells[2] ? normalizeDeadline(stripHtml(cells[2])) : '';
 
       if (isJunk(title) || seen.has(title)) continue;
       seen.add(title);
@@ -287,6 +298,7 @@ async function scrapeDASNY(page) {
     }, NAV_JUNK);
 
     const now = new Date();
+    grants.forEach(g => { g.dueDate = normalizeDeadline(g.dueDate); });
     const formatted = grants
       .filter(g => !isJunk(g.title))
       .filter(g => {
@@ -348,7 +360,7 @@ async function scrapeDEC() {
 
       const rawUrl = lm[1];
       const url = resolveUrl(rawUrl, 'https://dec.ny.gov');
-      const deadlineRaw = stripHtml(cells[2]).trim();
+      const deadlineRaw = normalizeDeadline(stripHtml(cells[2]).trim());
       const deadlineLower = deadlineRaw.toLowerCase();
 
       // Determine status from deadline column
