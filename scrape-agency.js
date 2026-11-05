@@ -361,7 +361,7 @@ async function scrapeDEC() {
         status = 'Closed';
       }
 
-      const hasDate = /\d{1,2}[\/.\-]\d{1,2}|(january|february|march|april|may|june|july|august|september|october|november|december)/i.test(deadlineRaw);
+      const hasDate = /\d{1,2}[\/.\-]\d{1,2}|\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d/i.test(deadlineRaw);
       let dueDate = '';
       if (deadlineLower === 'continuous' || deadlineLower === 'rolling') {
         dueDate = 'Rolling';
