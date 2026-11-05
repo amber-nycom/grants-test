@@ -93,10 +93,11 @@ async function checkGrantStatus(browserPage, url) {
       return { status, dueDate };
     });
 
-    console.log('  [' + url.split('/').pop() + '] status=' + result.status + (result.dueDate ? ' due=' + result.dueDate : ''));
-    return result;
+    console.log('  [REACHABLE] ' + url + ' status=' + result.status + (result.dueDate ? ' due=' + result.dueDate : ''));
+    return { ...result, reachable: true };
   } catch(e) {
-    return { status: 'Available', dueDate: '' };
+    console.log('  [UNREACHABLE] ' + url + ' — ' + e.message);
+    return { status: 'Available', dueDate: '', reachable: false };
   }
 }
 
@@ -202,7 +203,7 @@ async function scrapeEFC() {
       const dueLower = dueDate.toLowerCase();
       const efcStatus = (dueLower.includes('closed') || dueLower.includes('not available') || dueLower.includes('not accepting')) ? 'Closed' : 'Available';
       // Only keep dueDate if it contains an actual date value
-      const hasDate = /\d{1,2}[\/.\-]\d{1,2}|(january|february|march|april|may|june|july|august|september|october|november|december)/i.test(dueDate);
+      const hasDate = /\d{1,2}[\/.\-]\d{1,2}|(january|february|march|april|may|june|july|august|september|october|november|december)/i.test(dueDate);
       grants.push({
         id: 'efc-' + title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30),
         title, agency: 'NYS Environmental Facilities Corporation',
@@ -236,92 +237,61 @@ async function scrapeEFC() {
   }
 }
 
-// ── DASNY ─────────────────────────────────────────────────────
-async function scrapeDASNY(page) {
-  console.log('Scraping DASNY...');
-  try {
-    await page.goto('https://www.dasny.org/about/what-we-do/grants-administration', {
-      waitUntil: 'networkidle0', timeout: 30000
-    });
-    await new Promise(r => setTimeout(r, 3000));
+// ── NYS PARKS ────────────────────────────────────────────────
+// Hardcoded to known open programs — Parks pages require heavy JS rendering
+// and their closed language varies too much for reliable keyword detection.
+// Status is still verified via Puppeteer on each run (checkGrantStatus, in
+// the MAIN block below) — same as EFC's dedicated-page pass. NOTE: this
+// Puppeteer pass hits parks.ny.gov directly, which is the same request path
+// that's been getting blocked by Cloudflare bot-protection on GitHub Actions
+// runner IPs. Restoring this function does not fix that; it re-exposes the
+// scraper to it. If you re-enable this, remove the corresponding manual
+// Parks entries from agency-grants.json first to avoid duplicate cards.
+async function scrapeParks() {
+  console.log('Scraping NYS Parks...');
+  const known = [
+    { title: 'Environmental Protection Fund', link: 'https://parks.ny.gov/grants/environmental-protection-fund' },
+    { title: 'Municipal Parks and Recreation Grant', link: 'https://parks.ny.gov/grants/municipal-parks-recreation-grant' },
+    { title: 'Recreational Trails Program', link: 'https://parks.ny.gov/grants/recreational-trails-program' },
+    { title: 'African American Heritage Grant', link: 'https://parks.ny.gov/grants/african-american-heritage-grant' },
+    { title: 'LWCF Outdoor Recreation Legacy Partnership Program', link: 'https://parks.ny.gov/grants/lwcf-outdoor-recreation-legacy-partnership-program' },
+    { title: 'Boating Infrastructure Grant Program', link: 'https://parks.ny.gov/grants/boating-infrastructure-grant-program' },
+    { title: 'Maritime Heritage Subgrant Program', link: 'https://parks.ny.gov/grants/maritime-heritage-subgrant-program' },
+    { title: 'ZBGA Capital Grant Program', link: 'https://parks.ny.gov/grants/zbga-capital-grant-program' },
+    { title: 'ZBGA Operational Support Grant Program', link: 'https://parks.ny.gov/grants/zoos-botanical-gardens-aquaria-operational-support-grant-program' },
+    { title: 'Snowmobile Trail Grant Program', link: 'https://parks.ny.gov/activities/snowmobiling/snowmobile-grant-program' },
+    // NY PLAYS isn't included here — it's a DASNY program, and DASNY isn't scraped
+  ];
 
-    // Log raw headings for debugging
-    const debug = await page.evaluate(() => {
-      const hs = Array.from(document.querySelectorAll('h2, h3'));
-      return hs.map(h => h.innerText.trim()).filter(t => t.length > 2);
-    });
-    console.log('  DASNY headings found: ' + JSON.stringify(debug));
+  // Programs confirmed closed — Puppeteer will override to Available if they reopen
+  const knownClosed = new Set([
+    'https://parks.ny.gov/grants/environmental-protection-fund',
+    'https://parks.ny.gov/grants/lwcf-outdoor-recreation-legacy-partnership-program',
+    'https://parks.ny.gov/grants/boating-infrastructure-grant-program',
+    'https://parks.ny.gov/grants/zbga-capital-grant-program',
+    'https://parks.ny.gov/grants/zoos-botanical-gardens-aquaria-operational-support-grant-program',
+    'https://parks.ny.gov/grants/african-american-heritage-grant',
+    'https://parks.ny.gov/grants/maritime-heritage-subgrant-program',
+  ]);
 
-    const grants = await page.evaluate((NAV_JUNK) => {
-      function isJunk(title) {
-        if (!title || title.length < 5) return true;
-        const t = title.toLowerCase().trim();
-        return NAV_JUNK.some(j => t === j || t.startsWith(j));
-      }
-
-      const results = [];
-      const seen = new Set();
-      const main = document.querySelector('main, .main-content, #main-content, [role="main"], article') || document.body;
-      const headings = Array.from(main.querySelectorAll('h3'));
-
-      for (const h of headings) {
-        const title = (h.innerText || '').trim();
-        if (isJunk(title) || seen.has(title)) continue;
-        seen.add(title);
-
-        let dueDate = '';
-        let link = 'https://www.dasny.org/about/what-we-do/grants-administration';
-        let el = h.nextElementSibling;
-
-        for (let i = 0; i < 8 && el; i++) {
-          const text = el.innerText || '';
-          const dateMatch = text.match(/([A-Z][a-z]+ \d{1,2},? \d{4})/);
-          if (dateMatch && !dueDate) dueDate = dateMatch[1];
-
-          const anchors = Array.from(el.querySelectorAll('a[href]'));
-          for (const a of anchors) {
-            if (a.href && a.href.startsWith('http') &&
-                !a.href.includes('javascript') &&
-                !a.href.includes('/about/what-we-do') &&
-                !a.href.includes('/opportunities') &&
-                !a.href.includes('/news') &&
-                !a.href.includes('grantsmanagement.ny.gov/register') &&
-                link.includes('/grants-administration')) {
-              link = a.href;
-            }
-          }
-          el = el.nextElementSibling;
-        }
-        results.push({ title, dueDate, link });
-      }
-      return results;
-    }, NAV_JUNK);
-
-    const now = new Date();
-    grants.forEach(g => { g.dueDate = normalizeDeadline(g.dueDate); });
-    const formatted = grants
-      .filter(g => !isJunk(g.title))
-      .filter(g => {
-        if (!g.dueDate) return true;
-        const d = new Date(g.dueDate);
-        if (isNaN(d.getTime())) return true;
-        if (d < now) { console.log('  DASNY SKIP past: ' + g.title + ' (' + g.dueDate + ')'); return false; }
-        return true;
-      })
-      .map(g => ({
-        id: 'dasny-' + g.title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 30),
-        title: g.title, agency: 'DASNY',
-        status: 'Available', dueDate: g.dueDate,
-        link: g.link, source: 'DASNY',
-      }));
-
-    console.log('  DASNY: ' + formatted.length + ' grants');
-    return formatted;
-  } catch (e) {
-    console.log('  DASNY error: ' + e.message);
-    return [];
-  }
+  return known.map(k => ({
+    id: 'parks-' + k.title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 40),
+    title: k.title,
+    agency: 'NYS Office of Parks, Recreation & Historic Preservation',
+    status: knownClosed.has(k.link) ? 'Closed' : 'Available',
+    dueDate: '',
+    link: k.link,
+    source: 'NYS Parks',
+  }));
 }
+
+// DASNY is NOT scraped. Unlike DEC, DASNY's page has no eligibility column
+// to filter on, so scraping every program heading pulled in non-municipal
+// programs too (e.g. VNCP — nonprofit veterans orgs, not municipalities;
+// 4CFP — child care providers). One program's "link" also resolved to an
+// Outlook safelink wrapping a YouTube video rather than a real program
+// page. DASNY grants are entered manually instead — see NY BRICKS in
+// agency-grants.json as the current example.
 
 // ── DEC ──────────────────────────────────────────────────────
 async function scrapeDEC() {
@@ -412,15 +382,23 @@ async function scrapeDEC() {
   await page.setViewport({ width: 1280, height: 900 });
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
 
-  // NYS Parks and HCR are NOT scraped. Both sites sit behind Cloudflare's
-  // bot challenge on GitHub Actions runners, so any automated attempt either
+  // HCR is NOT scraped — hcr.ny.gov sits behind the same Cloudflare bot
+  // challenge on GitHub Actions runners, so any automated attempt either
   // gets nothing or silently returns a generic "Available" for everything —
   // exactly the kind of confidently-wrong data we don't want to show
-  // municipal officials. Parks and HCR grants are maintained entirely by
-  // hand as manual: true entries in agency-grants.json (see below) — the
-  // same mechanism already used for one-off manual additions.
-  const [efc, dec] = await Promise.all([scrapeEFC(), scrapeDEC()]);
-  const dasny = await scrapeDASNY(page);
+  // municipal officials. HCR grants are maintained entirely by hand as
+  // manual: true entries in agency-grants.json (see below).
+  //
+  // Parks IS scraped and now goes LIVE into the dashboard (previously
+  // diagnostic-only while we confirmed Cloudflare wasn't blocking the
+  // runner IP). Manual entries are still preserved from agency-grants.json
+  // as a safety net, but any manual entry whose title matches a freshly
+  // scraped title is SUPERSEDED (dropped) further down — the scraper wins
+  // when it succeeds. If Cloudflare blocks Parks again on some future run
+  // and scrapeParks() comes back empty/incomplete for a given program, the
+  // old manual entry for that title is still there and takes over
+  // automatically — no code change needed to fall back.
+  const [efc, parks, dec] = await Promise.all([scrapeEFC(), scrapeParks(), scrapeDEC()]);
 
   // Deduplicate across all sources by title
   const seenTitles = new Set();
@@ -431,17 +409,17 @@ async function scrapeDEC() {
     return true;
   });
   const efcDeduped = dedupe(efc);
+  const parksDeduped = dedupe(parks);
   const decDeduped = dedupe(dec);
-  // Add dasny titles to seen so NY PLAYS/BRICKS/SWIMS don't duplicate DASNY's
-  dasny.forEach(g => seenTitles.add(g.title.toLowerCase().trim()));
 
   // Check status of EFC grants using Puppeteer (JS-rendered pages).
   // EFC grants with dedicated pages (like WIIA) have their deadlines there, not on /apply.
   // Skip the generic /apply page itself since it won't have per-grant deadline info.
   const efcNeedsCheck = efcDeduped.filter(g => g.link && g.link.startsWith('http') && g.link !== 'https://efc.ny.gov/apply');
-  console.log('\nChecking status of ' + efcNeedsCheck.length + ' EFC grants...');
+  const needsCheck = [...efcNeedsCheck, ...parksDeduped].filter(g => g.link && g.link.startsWith('http'));
+  console.log('\nChecking status of ' + needsCheck.length + ' EFC/Parks grants...');
   const statusMap = {};
-  for (const g of efcNeedsCheck) {
+  for (const g of needsCheck) {
     const result = await checkGrantStatus(page, g.link);
     statusMap[g.id] = result;
     if (result.status === 'Closed') console.log('  CLOSED: [' + g.source + '] ' + g.title);
@@ -452,10 +430,33 @@ async function scrapeDEC() {
       ? 'Closed' : checked.status || g.status;
     return { ...g, status: raw === 'Open' ? 'Available' : raw, dueDate: checked.dueDate || g.dueDate };
   });
+  // Reachability log — kept from the diagnostic-only period since it's
+  // still useful signal each run, even though Parks now feeds the
+  // dashboard live below.
+  console.log('\nParks reachability:');
+  let parksReachableCount = 0;
+  parksDeduped.forEach(g => {
+    const checked = statusMap[g.id];
+    if (checked && checked.reachable) {
+      parksReachableCount++;
+      console.log('  [REACHABLE] ' + g.title + ' -> status=' + checked.status + (checked.dueDate ? ' due=' + checked.dueDate : ''));
+    } else {
+      console.log('  [UNREACHABLE] ' + g.title + ' (' + g.link + ')');
+    }
+  });
+  console.log('Parks: ' + parksReachableCount + '/' + parksDeduped.length + ' pages reachable');
+
+  const parksChecked = parksDeduped.map(g => {
+    const checked = statusMap[g.id] || {};
+    // Only override a known-closed status if Puppeteer explicitly found it open
+    const raw = g.status === 'Closed' && checked.status !== 'Open'
+      ? 'Closed' : checked.status || g.status;
+    return { ...g, status: raw === 'Open' ? 'Available' : raw, dueDate: checked.dueDate || g.dueDate };
+  });
 
   await browser.close();
 
-  const scraped = [...efcChecked, ...dasny, ...decDeduped];
+  const scraped = [...efcChecked, ...parksChecked, ...decDeduped];
   console.log('\nTotal agency grants: ' + scraped.length);
   scraped.forEach(g => console.log(' [' + g.source + '] ' + g.title + (g.dueDate ? ' · ' + g.dueDate : '')));
 
@@ -464,22 +465,40 @@ async function scrapeDEC() {
   if (fs.existsSync(outputPath)) {
     try {
       const existing = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
-      manualGrants = (existing.grants || []).filter(g => g.manual === true);
-      console.log('Preserving ' + manualGrants.length + ' manual entries (includes NYS Parks & HCR)');
+      const allManual = (existing.grants || []).filter(g => g.manual === true);
+
+      // A manual entry is a fallback, not a permanent fixture. If this run's
+      // scraper produced a grant with the exact same title, the scraped
+      // version is fresher (live status/dueDate) and wins — the manual
+      // entry is superseded and dropped for this run. If the scraper
+      // didn't produce that title (site down, Cloudflare block, page
+      // structure changed, or it's an HCR/other title that was never
+      // scraped in the first place), the manual entry survives untouched.
+      // This is what lets Parks run live without deleting the old manual
+      // rows by hand: overlap resolves itself automatically, every run.
+      const scrapedTitles = new Set(scraped.map(g => g.title.toLowerCase().trim()));
+      manualGrants = allManual.filter(g => !scrapedTitles.has(g.title.toLowerCase().trim()));
+      const superseded = allManual.filter(g => scrapedTitles.has(g.title.toLowerCase().trim()));
+
+      console.log('Preserving ' + manualGrants.length + ' manual entries (no matching scraped title this run)');
+      if (superseded.length) {
+        console.log('Superseded ' + superseded.length + ' manual entries with fresher scraped data:');
+        superseded.forEach(g => console.log('  - ' + g.title));
+      }
     } catch(e) { console.log('Could not read existing file:', e.message); }
   }
 
   const allGrants = [...scraped, ...manualGrants];
   const output = {
     grants: allGrants, fetched: new Date().toISOString(), count: allGrants.length,
-    sources: { efc: efcChecked.length, dasny: dasny.length, dec: dec.length, manual: manualGrants.length },
+    sources: { efc: efcChecked.length, parks: parksChecked.length, dec: dec.length, manual: manualGrants.length },
     // Plain metadata field, not part of "grants" — purely so it's obvious when
     // scanning the raw file in GitHub where hand-maintained entries start.
     // Lives outside the array on purpose: nothing reads or renders this key,
     // so it needs zero filtering in index.html and can't ever show up on the
     // dashboard by accident.
     _manualEntriesNote: manualGrants.length
-      ? `Grants ${allGrants.length - manualGrants.length + 1}-${allGrants.length} in the array above (marked "manual": true) are NYS Parks & HCR entries, hand-maintained and preserved across every scraper run — not scraped.`
+      ? `Grants ${allGrants.length - manualGrants.length + 1}-${allGrants.length} in the array above (marked "manual": true) are hand-maintained entries (HCR always; Parks only when this run's scraper didn't return a matching title) — preserved as a fallback, superseded automatically whenever the scraper produces the same title fresh.`
       : 'No manual entries currently present.',
   };
   fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
