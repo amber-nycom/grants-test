@@ -716,6 +716,8 @@
 const GRANTS_API = 'https://nycom-grants-proxy.grants-aa8.workers.dev';
 const PAGE_SIZE = 12;
 const FED_PAGE_SIZE = 100;
+// Grants.gov agency code prefixes for the Federal Agency dropdown (the dropdown value -> codes to match).
+const FED_AGENCY_PREFIXES = { DOJ: ['USDOJ', 'DOJ'] };
 
 let state = {
   keyword:'', category:'', cat:'', agency:'', eligibility:'02',
@@ -871,17 +873,36 @@ async function fetchFedGrants(append) {
   const body = { rows:FED_PAGE_SIZE, startRecordNum:fed.page*FED_PAGE_SIZE, oppStatuses:fed.statuses.join('|')||'posted', sortBy:`${sb}|${sd}` };
   if (fed.keyword) body.keyword = fed.keyword;
   if (fed.category) body.fundingCategories = fed.category;
-  if (fed.agency) body.agencies = fed.agency;   // Grants.gov agency code; matches the agency and its sub-offices
   if (fed.eligibility) body.eligibilities = fed.eligibility;
   try {
-    const r = await fetch(GRANTS_API, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const d = await r.json();
-    let g = d.oppHits || d.data?.oppHits || [];
-    const rawCount = d.hitCount || d.data?.hitCount || g.length;
-    g = filterLocal(g);
-    g = filterBlockedTitles(g);
-    fed.grants = append ? [...fed.grants, ...g] : g;
+    const post = async b => {
+      const r = await fetch(GRANTS_API, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d = await r.json();
+      return { hits: d.oppHits || d.data?.oppHits || [], total: d.hitCount || d.data?.hitCount || 0 };
+    };
+    let g, rawCount;
+    if (fed.agency) {
+      // Agency filter runs in the browser: read through the result pages and keep the opportunities whose
+      // agency code starts with the chosen agency (e.g. DOT-FHWA counts as DOT). Capped at 10 pages.
+      const prefixes = (FED_AGENCY_PREFIXES[fed.agency] || [fed.agency]).map(x => x.toUpperCase());
+      const first = await post({ ...body, startRecordNum: 0 });
+      let all = first.hits;
+      const pages = Math.min(Math.ceil(first.total / FED_PAGE_SIZE), 10);
+      if (pages > 1) {
+        const rest = await Promise.all(Array.from({ length: pages - 1 }, (_, i) => post({ ...body, startRecordNum: (i + 1) * FED_PAGE_SIZE })));
+        rest.forEach(x => { all = all.concat(x.hits); });
+      }
+      g = filterBlockedTitles(filterLocal(all)).filter(o => prefixes.includes((o.agencyCode || '').toUpperCase().split('-')[0]));
+      rawCount = 0;            // everything is already on screen, so no "load more"
+      fed.grants = g;
+    } else {
+      const res = await post(body);
+      g = res.hits; rawCount = res.total || g.length;
+      g = filterLocal(g);
+      g = filterBlockedTitles(g);
+      fed.grants = append ? [...fed.grants, ...g] : g;
+    }
     fed.totalHits = rawCount;
     fed.loading = false;
     renderFedGrants();
