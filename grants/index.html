@@ -246,7 +246,7 @@
     <div class="nav-tab active" onclick="switchTab('browse',this)">State Grants</div>
     <div class="nav-tab" onclick="switchTab('federal',this)">Federal Grants</div>
     <div class="nav-tab" onclick="switchTab('other',this)">Other Grants</div>
-    <div class="nav-tab" onclick="switchTab('resources',this)">Other Resources</div>
+    <div class="nav-tab" id="nav-resources" onclick="switchTab('resources',this)">Other Resources</div>
     <div class="nav-tab" onclick="switchTab('howto',this)">How to Use</div>
   </nav>
   <div class="topbar-right">
@@ -572,7 +572,7 @@
           <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Federal Grants</div>
           <p style="font-size:12.5px;color:var(--text-mid);line-height:1.6;">Live results from Grants.gov filtered to opportunities available for municipal governments. Updated each time you visit the tab.</p>
         </div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #0891b2;border-radius:var(--radius-lg);padding:14px 18px;">
+        <div id="howto-resources" style="background:var(--surface);border:1px solid var(--border);border-left:4px solid #0891b2;border-radius:var(--radius-lg);padding:14px 18px;">
           <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Other Resources</div>
           <p style="font-size:12.5px;color:var(--text-mid);line-height:1.6;">A curated directory of grant portals, federal and state agency programs, regional funding sources, and technical assistance resources for NYS municipalities. Use this tab to find programs not covered by the State or Federal tabs, explore agency-specific grant pages, or find technical assistance for the application process.</p>
         </div>
@@ -1834,6 +1834,10 @@ function ogMobileStatus(status, btn) {
 function ogMobileType(v) { og.type = v; renderOtherGrants(); }
 function ogMobileRegion(v) { og.region = v; renderOtherGrants(); }
 
+// config.js: SHOW_OTHER_RESOURCES: false hides the Other Resources tab (and its line on How to Use) until you're ready.
+if ((window.NYCOM_CONFIG || {}).SHOW_OTHER_RESOURCES === false) {
+  ['nav-resources', 'howto-resources', 'tab-resources'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+}
 loadGrantData();
 loadOtherGrants();
 </script>
