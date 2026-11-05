@@ -711,7 +711,11 @@
   </div>
 </div>
 
-<script src="config.js"></script>
+<script>
+  // Load config.js with a changing address so a browser or GitHub Pages never serves a stale copy of it
+  // (this is what makes a change to config.js show up right away, even inside the test site's iframe).
+  document.write('<script src="config.js?_=' + Date.now() + '"><\/script>');
+</script>
 <script>
 const GRANTS_API = 'https://nycom-grants-proxy.grants-aa8.workers.dev';
 const PAGE_SIZE = 12;
@@ -1702,12 +1706,12 @@ async function fetchNYSGrants(){
   const d = await fetchJsonFile('nys-grants.json'); if (!d) return;
   const all = d.grants || [];
   state.jsonManualGrants = all.filter(g => g.manual === true);
-  state.nysGrants = all.filter(g => g.manual !== true);
+  state.nysGrants = all.filter(g => g.manual !== true && !g.noYear);
   buildAgencyFilter(); renderGrants();
 }
 async function fetchAgencyGrants(){
   const d = await fetchJsonFile('agency-grants.json'); if (!d) return;
-  state.agencyGrants = d.grants || [];
+  state.agencyGrants = (d.grants || []).filter(g => !g.noYear);   // deadline has no year: held back until verified in the sheet
   buildAgencyFilter(); renderGrants();
 }
 
