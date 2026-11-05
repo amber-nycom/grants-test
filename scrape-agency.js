@@ -147,7 +147,8 @@ function isPast(dateStr) {
   if (isYearless(dateStr)) return false;   // no year given: can't tell, so don't call it past
   const parsed = new Date(dateStr);
   if (isNaN(parsed.getTime())) return false;
-  return parsed < new Date();
+  // A deadline stays open through the day it falls on, so compare against the END of that day.
+  return parsed.getTime() + 24 * 60 * 60 * 1000 <= Date.now();
 }
 
 const NAV_JUNK = [
@@ -305,6 +306,67 @@ async function scrapeParks() {
 // page. DASNY grants are entered manually instead — see NY BRICKS in
 // agency-grants.json as the current example.
 
+// ── NYS PARKS: read the single listing page ──────────────────
+// parks.ny.gov/grants lists every program with its status on ONE page, so we read that instead of
+// opening each program's page (which is what Cloudflare tends to block). For each program in the
+// fixed list we find its link on the page, climb to the row/card around it, and read Open/Closed
+// from that text. If the page can't be read, or fewer than 6 programs are recognised, we return {}
+// and the caller falls back to the fixed list + per-page checks exactly as before.
+// A date is only taken when it follows "due" / "deadline" / "by" so an application OPENING date
+// is never mistaken for a deadline.
+async function scrapeParksLive(page, programs) {
+  console.log('Reading NYS Parks listing page...');
+  try {
+    await page.goto('https://parks.ny.gov/grants', { waitUntil: 'networkidle0', timeout: 30000 });
+    await new Promise(r => setTimeout(r, 2000));
+    const found = await page.evaluate((links) => {
+      const out = {};
+      const anchors = Array.from(document.querySelectorAll('a[href]'));
+      const pathOf = h => { try { return new URL(h, location.href).pathname.replace(/\/+$/, ''); } catch (e) { return ''; } };
+      for (const link of links) {
+        const want = pathOf(link);
+        const a = anchors.find(x => pathOf(x.href) === want);
+        if (!a) continue;
+        let el = a, text = '';
+        for (let i = 0; i < 6 && el; i++) {
+          text = (el.innerText || '').replace(/\s+/g, ' ').trim();
+          if (text.length < 700 && /\b(closed|open|rolling)\b/i.test(text)) break;
+          text = '';
+          el = el.parentElement;
+        }
+        out[link] = text;
+      }
+      return out;
+    }, programs.map(g => g.link));
+
+    const result = {};
+    let recognised = 0;
+    for (const g of programs) {
+      const text = found[g.link] || '';
+      if (!text) { console.log('  PARKS page: no row found for ' + g.title); continue; }
+      const closed = /\bclosed\b/i.test(text), open = /\b(open|rolling)\b/i.test(text);
+      if (closed === open) { console.log('  PARKS page: unclear status for ' + g.title + ' -> "' + text.slice(0, 120) + '"'); continue; }
+      let dueDate = '';
+      const cue = text.match(/(?:due|deadline|by|until)\b[^.]{0,40}?((?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?!\d)(?:st|nd|rd|th)?(?:,?\s*\d{4})?)/i);
+      if (cue) dueDate = normalizeDeadline(cue[1]);
+      else if (!closed && /rolling basis|rolling/i.test(text)) dueDate = 'Rolling';
+      // A page can say "open" next to a deadline that has already passed: trust the date.
+      result[g.id] = { status: (closed || isPast(dueDate)) ? 'Closed' : 'Available', dueDate };
+      recognised++;
+      console.log('  PARKS page: ' + g.title + ' -> ' + result[g.id].status + (dueDate ? ' · ' + dueDate : ''));
+    }
+    if (recognised < 6) {
+      console.log('  PARKS page: only ' + recognised + '/' + programs.length + ' programs recognised - using the fixed list instead');
+      return {};
+    }
+    console.log('  PARKS page: ' + recognised + '/' + programs.length + ' programs read from the listing');
+    return result;
+  } catch (e) {
+    console.log('  PARKS page unreachable (' + e.message + ') - using the fixed list instead');
+    return {};
+  }
+}
+
 // ── DEC ──────────────────────────────────────────────────────
 async function scrapeDEC() {
   console.log('Scraping DEC...');
@@ -429,7 +491,9 @@ async function scrapeDEC() {
   // EFC grants with dedicated pages (like WIIA) have their deadlines there, not on /apply.
   // Skip the generic /apply page itself since it won't have per-grant deadline info.
   const efcNeedsCheck = efcDeduped.filter(g => g.link && g.link.startsWith('http') && g.link !== 'https://efc.ny.gov/apply');
-  const needsCheck = [...efcNeedsCheck, ...parksDeduped].filter(g => g.link && g.link.startsWith('http'));
+  // Parks: try the one listing page first; programs it covers skip the per-page check.
+  const parksLive = await scrapeParksLive(page, parksDeduped);
+  const needsCheck = [...efcNeedsCheck, ...parksDeduped.filter(g => !parksLive[g.id])].filter(g => g.link && g.link.startsWith('http'));
   console.log('\nChecking status of ' + needsCheck.length + ' EFC/Parks grants...');
   const statusMap = {};
   for (const g of needsCheck) {
@@ -450,7 +514,10 @@ async function scrapeDEC() {
   let parksReachableCount = 0;
   parksDeduped.forEach(g => {
     const checked = statusMap[g.id];
-    if (checked && checked.reachable) {
+    if (parksLive[g.id]) {
+      parksReachableCount++;
+      console.log('  [LISTING PAGE] ' + g.title + ' -> status=' + parksLive[g.id].status + (parksLive[g.id].dueDate ? ' due=' + parksLive[g.id].dueDate : ''));
+    } else if (checked && checked.reachable) {
       parksReachableCount++;
       console.log('  [REACHABLE] ' + g.title + ' -> status=' + checked.status + (checked.dueDate ? ' due=' + checked.dueDate : ''));
     } else {
@@ -460,6 +527,7 @@ async function scrapeDEC() {
   console.log('Parks: ' + parksReachableCount + '/' + parksDeduped.length + ' pages reachable');
 
   const parksChecked = parksDeduped.map(g => {
+    if (parksLive[g.id]) return { ...g, status: parksLive[g.id].status, dueDate: parksLive[g.id].dueDate };   // the listing page wins over the fixed list
     const checked = statusMap[g.id] || {};
     // Only override a known-closed status if Puppeteer explicitly found it open
     const raw = g.status === 'Closed' && checked.status !== 'Open'
@@ -472,6 +540,14 @@ async function scrapeDEC() {
   const scraped = [...efcChecked, ...parksChecked, ...decDeduped];
   console.log('\nTotal agency grants: ' + scraped.length);
   scraped.forEach(g => console.log(' [' + g.source + '] ' + g.title + (g.dueDate ? ' · ' + g.dueDate : '')));
+
+  // Past due date = Closed, whatever the source said. (Yearless dates and Rolling are never treated as past.)
+  scraped.forEach(g => {
+    if (g.status !== 'Closed' && g.dueDate && isPast(g.dueDate)) {
+      console.log('  PAST DUE -> Closed: ' + g.title + ' · ' + g.dueDate);
+      g.status = 'Closed';
+    }
+  });
 
   // Grants whose deadline has no year (e.g. "January 29") are marked noYear. The sheet sync loads
   // them as Hidden with sync_flag "No year - verify" so you confirm the year before they go live.
