@@ -1159,8 +1159,8 @@ function daysLeft(raw) {
   return Math.round((d - today) / 86400000);
 }
 // The countdown line shared by every card: "Closes in 12 days · 11/09/2026".
-function deadlineHTML(raw) {
-  if (/rolling/i.test(raw || '')) return `<span class="deadline-row rolling">⟳ Rolling — check with agency for funding availability</span>`;
+function deadlineHTML(raw, who = 'agency') {
+  if (/rolling/i.test(raw || '')) return `<span class="deadline-row rolling">⟳ Rolling — check with ${who} for funding availability</span>`;
   const days = daysLeft(raw);
   if (days === null) return `<span class="deadline-row">⏱ ${esc((raw || '').slice(0, 80))}</span>`;
   const shown = fmtDueDate(raw);
@@ -1325,9 +1325,10 @@ function renderAgencyCard(g) {
   const badge = fundingBadge(g);
   const sourceStyle = sourceColors[badge] || sourceColors[g.source] || 'background:var(--text-mid);color:#fff;';
   let dl = '';
-  if (g.dueDate) { dl = deadlineHTML(g.dueDate); }
+  const who = g._other ? 'organization' : 'agency';   // Other Grants come from funders that aren't agencies
+  if (g.dueDate) { dl = deadlineHTML(g.dueDate, who); }
   else if (isClosed) { dl = `<span class="deadline-row">⏱ Closed · no fixed deadline listed</span>`; }
-  else { dl = `<span class="deadline-row rolling">⟳ No deadline listed — check with agency</span>`; }
+  else { dl = `<span class="deadline-row rolling">⟳ No deadline listed — check with ${who}</span>`; }
   return `<div class="grant-card" style="${isClosed?'opacity:0.55;':''}" onclick="${g._onclick || `openStateModal(${g._i})`}">
     <div class="card-top"><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="tag" style="${sourceStyle}">${esc(badge)}</span><span class="tag ${sc}">${esc(isClosed?'Closed':g.status||'Available')}</span></div></div>
     <div class="card-title">${esc(g.title)}</div>
