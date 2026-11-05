@@ -1271,22 +1271,33 @@ function renderManualCard(g) {
   </div>`;
 }
 
+// Badge text for agency cards: the funder (DEC, NYS Parks, HCR, NYSERDA...) read from the agency name,
+// so hand-added rows look like scraped ones. Other Grants cards keep their type (Regional, Nonprofit...).
+function fundingBadge(g) {
+  if (g._other) return g.source || 'Other';
+  const a = (g.agency || '').trim();
+  for (const [code, name] of Object.entries(NYS_AGENCY_NAMES)) if (name === a) return NYS_AGENCY_LABELS[code] || code;
+  for (const [src, name] of Object.entries(SOURCE_DISPLAY_NAMES)) if (name === a) return src;
+  if (a && a.length <= 14) return a;
+  return g.source && g.source !== 'Manual' ? g.source : (a || 'Agency');
+}
 function renderAgencyCard(g) {
   const isClosed = isAgencyGrantClosed(g);
   const sc = isClosed ? 'tag-closed' : 'tag-posted';
-  const sourceColors = { 'EFC':'background:#0f5132;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','HCR':'background:#1e3a5f;color:#fff;','DASNY':'background:#3b0764;color:#fff;', ...OG_TYPE_COLORS };
-  const sourceStyle = sourceColors[g.source] || 'background:var(--text-mid);color:#fff;';
+  const sourceColors = { 'DEC':'background:#0f5132;color:#fff;','NYSERDA':'background:#0e7490;color:#fff;','EFC':'background:#0f5132;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','HCR':'background:#1e3a5f;color:#fff;','DASNY':'background:#3b0764;color:#fff;', ...OG_TYPE_COLORS };
+  const badge = fundingBadge(g);
+  const sourceStyle = sourceColors[badge] || sourceColors[g.source] || 'background:var(--text-mid);color:#fff;';
   let dl = '';
   if (g.dueDate) { dl = deadlineHTML(g.dueDate); }
   else if (isClosed) { dl = `<span class="deadline-row">⏱ Closed · no fixed deadline listed</span>`; }
   else { dl = `<span class="deadline-row rolling">⟳ No deadline listed — check with agency</span>`; }
   return `<div class="grant-card" style="${isClosed?'opacity:0.55;':''}" onclick="${g._onclick || `openStateModal(${g._i})`}">
-    <div class="card-top"><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="tag" style="${sourceStyle}">${esc(g.source||'Agency')}</span><span class="tag ${sc}">${esc(isClosed?'Closed':g.status||'Available')}</span></div></div>
+    <div class="card-top"><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="tag" style="${sourceStyle}">${esc(badge)}</span><span class="tag ${sc}">${esc(isClosed?'Closed':g.status||'Available')}</span></div></div>
     <div class="card-title">${esc(g.title)}</div>
     <div class="card-agency">${esc(g.agency||'')}</div>
     <div class="card-mid"><span></span></div>
     ${dl}
-    <div class="card-bottom"><div class="card-id">${esc(g.source||'')}</div><a class="view-btn" href="${esc(g.link||'#')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">View ↗</a></div>
+    <div class="card-bottom"><div class="card-id">${esc(badge)}</div><a class="view-btn" href="${esc(g.link||'#')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">View ↗</a></div>
   </div>`;
 }
 
@@ -1436,7 +1447,7 @@ function openStateModal(i, list) {
   const statusText = closed ? 'Closed' : (g.status || 'Available');
   let badge, badgeStyle, agencyFull, idText;
   if (isAgency) {
-    badge = g.source || 'Agency'; badgeStyle = ({ 'EFC':'background:#0f5132;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','HCR':'background:#1e3a5f;color:#fff;','DASNY':'background:#3b0764;color:#fff;','Manual':'background:var(--manual);color:#fff;', ...OG_TYPE_COLORS })[badge] || 'background:var(--text-mid);color:#fff;';
+    badge = fundingBadge(g); badgeStyle = ({ 'DEC':'background:#0f5132;color:#fff;','NYSERDA':'background:#0e7490;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','EFC':'background:#0f5132;color:#fff;','NYS Parks':'background:#14532d;color:#fff;','HCR':'background:#1e3a5f;color:#fff;','DASNY':'background:#3b0764;color:#fff;','Manual':'background:var(--manual);color:#fff;', ...OG_TYPE_COLORS })[badge] || 'background:var(--text-mid);color:#fff;';
     agencyFull = g.agency || ''; idText = '';
   } else {
     badge = NYS_AGENCY_LABELS[g.agency] || g.agency || 'NYS'; badgeStyle = NYS_AGENCY_COLORS[g.agency] || 'background:var(--nys);color:#fff;';
@@ -1612,9 +1623,10 @@ async function loadGrantData() {
   if (sheetRows) { sheetToGrants(); buildAgencyFilter(); renderGrants(); return; }
   await Promise.all([fetchNYSGrants(), fetchAgencyGrants()]);
   if (!(state.nysGrants||[]).length && !(state.agencyGrants||[]).length && !state.jsonManualGrants.length) {
-    const why = SHEET_CSV_URL ? 'The Google Sheet could not be read, and the JSON files were not found next to this page.'
-                              : 'No Google Sheet link is set (SHEET_CSV_URL), and the JSON files were not found next to this page.';
-    document.getElementById('grants-grid').innerHTML = `<div class="error-state"><div style="font-size:24px;">⚠️</div><div class="error-msg">Could not load grants.<br><small>${esc(why)}</small></div></div>`;
+    // Details for whoever maintains the site go to the browser console, not onto the page.
+    console.warn(SHEET_CSV_URL ? 'Grants data: the sheet link could not be read and the JSON files were not found.'
+                               : 'Grants data: no SHEET_CSV_URL is set in config.js and the JSON files were not found.');
+    document.getElementById('grants-grid').innerHTML = `<div class="error-state"><div style="font-size:24px;">⚠️</div><div class="error-msg">Could not load grants.<br><small>Please try again in a few minutes.</small></div></div>`;
   }
 }
 
@@ -1682,7 +1694,7 @@ async function loadOtherGrants() {
         ogAll = parseCSV(await r.text()).filter(r => r.title && !yes(r.hide)).map(r => ({
           id: r.id || r.title, title: r.title, agency: r.funder, link: r.link, dueDate: r.dueDate, status: r.status,
           description: r.description, eligibility: r.eligibility, award: r.amount, region: r.region, special: r.special,
-          source: r.type || 'Other', _type: 'agency',
+          source: r.type || 'Other', _type: 'agency', _other: true,
         }));
       }
     } catch (e) { console.log('Other grants not available:', e.message); }
