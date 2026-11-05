@@ -11,6 +11,36 @@
       "source": "EFC"
     },
     {
+      "id": "efc-water-infrastructure-improveme",
+      "title": "Water Infrastructure Improvement and Intermunicipal Grants",
+      "agency": "NYS Environmental Facilities Corporation",
+      "status": "Closed",
+      "dueDate": "July 27, 2027",
+      "description": "Competitive grants that empower municipalities to undertake water quality projects crucial to safeguarding public health, protecting the environment, bolstering climate readiness, and promoting economic development.",
+      "link": "https://efc.ny.gov/wiia",
+      "source": "EFC"
+    },
+    {
+      "id": "efc-green-resiliency-grants-and-gr",
+      "title": "Green Resiliency Grants and Green Innovation Grant Program",
+      "agency": "NYS Environmental Facilities Corporation",
+      "status": "Available",
+      "dueDate": "January 29, 2027",
+      "description": "Grants for implementing green infrastructure projects including stormwater management, water efficiency, and energy efficiency.",
+      "link": "https://efc.ny.gov/grg",
+      "source": "EFC"
+    },
+    {
+      "id": "efc-wastewater-infrastructure-engi",
+      "title": "Wastewater Infrastructure Engineering Planning Grants",
+      "agency": "NYS Environmental Facilities Corporation",
+      "status": "Closed",
+      "dueDate": "June 12, 2027",
+      "description": "Planning grants help communities prepare to apply for grants and financing through the CWSRF. Planning grants help fund the development of an engineering report, which is required in the EFC financing application process. EPGs help municipalities advance fiscally sound and well-designed projects to ",
+      "link": "https://efc.ny.gov/epg",
+      "source": "EFC"
+    },
+    {
       "id": "efc-clean-vessel-assistance-progra",
       "title": "Clean Vessel Assistance Program",
       "agency": "NYS Environmental Facilities Corporation",
@@ -274,8 +304,8 @@
       "id": "dec-open-space-conservation-grant-program",
       "title": "Open Space Conservation Grant Program",
       "agency": "NYS Department of Environmental Conservation",
-      "status": "Closed",
-      "dueDate": "April 15",
+      "status": "Available",
+      "dueDate": "April 15, 2027",
       "eligibility": "MUNI, NFP, OT",
       "link": "https://dec.ny.gov/nature/open-space/open-space-conservation-grant",
       "source": "DEC"
@@ -321,10 +351,10 @@
       "source": "DEC"
     }
   ],
-  "fetched": "2026-11-05T15:11:27.782Z",
-  "count": 33,
+  "fetched": "2026-11-05T15:32:36.483Z",
+  "count": 36,
   "sources": {
-    "efc": 2,
+    "efc": 5,
     "parks": 10,
     "dec": 21,
     "manual": 0
