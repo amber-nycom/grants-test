@@ -1,0 +1,30 @@
+name: Sync Sheet
+
+# Runs by itself on the same days as the scrapers, an hour after the last one (agency scrape is 9:00 UTC).
+# It does not run the scrapers: it sends the agency-grants.json / nys-grants.json that are in the repo by then.
+# You can still run it by hand from the Actions tab; a manual run is a dry run unless you untick the box.
+on:
+  schedule:
+    - cron: '30 10 * * 1,4'   # Monday & Thursday, 10:30 UTC (30 min margin after the 9:00 scrape, plus a little room for GitHub's start delays)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (report what would change, write nothing)'
+        type: boolean
+        default: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Send grants to the sheet
+        run: node sync-to-sheet.js
+        env:
+          SHEET_URL: ${{ secrets.SHEET_URL }}
+          SHEET_SECRET: ${{ secrets.SHEET_SECRET }}
+          # Scheduled runs always write; manual runs follow the checkbox.
+          DRY_RUN: ${{ github.event_name == 'schedule' && 'false' || inputs.dry_run }}
