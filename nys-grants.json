@@ -145,22 +145,6 @@
       "source": "NYS"
     },
     {
-      "id": "CORE 2026",
-      "agency": "DEC01",
-      "title": "CoRe 2026",
-      "status": "Available",
-      "eligibility": "Governmental Entity, Not-For-Profit, Tribal Organization",
-      "dueDate": "11/04/2026 2:00PM EST",
-      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
-      "serviceArea": "Environmental Supports",
-      "award": "$20,000,000",
-      "awardDate": "01/29/2027",
-      "questionsDue": "10/28/2026",
-      "conference": "",
-      "loi": "",
-      "source": "NYS"
-    },
-    {
       "id": "FRI 2026",
       "agency": "DEC01",
       "title": "Food Recovery Initiatives Grant Program - 2026",
@@ -170,7 +154,7 @@
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
       "award": "$2,000,000",
-      "awardDate": "01/01/2027",
+      "awardDate": "11/02/2028",
       "questionsDue": "10/27/2028",
       "conference": "meetny-gov.webex.com/weblink/register/r81ade55f8f4d1f16d8f226f5f3941a5a",
       "loi": "",
@@ -186,7 +170,7 @@
       "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
       "serviceArea": "Environmental Supports",
       "award": "$4,000,000",
-      "awardDate": "01/01/2027",
+      "awardDate": "11/02/2028",
       "questionsDue": "10/27/2028",
       "conference": "meetny-gov.webex.com/weblink/register/rcad1e4b4253c2aece90e9540fb3eee4e",
       "loi": "",
@@ -289,6 +273,22 @@
       "source": "NYS"
     },
     {
+      "id": "RCHSVS27",
+      "agency": "DOH01",
+      "title": "RFA#20815: NYS Resource Center for Hospital SVS",
+      "status": "Available",
+      "eligibility": "For Profit, Governmental Entity, Not-For-Profit",
+      "dueDate": "12/17/2026 4:00PM EST",
+      "link": "https://esupplier.sfs.ny.gov/psp/fscm/SUPPLIER/ERP/c/NY_SUPPUB_FL.AUC_RESP_INQ_AUC.GBL",
+      "serviceArea": "Health Services",
+      "award": "$5,000,000",
+      "awardDate": "04/01/2027",
+      "questionsDue": "11/05/2026",
+      "conference": "",
+      "loi": "11/05/2026",
+      "source": "NYS"
+    },
+    {
       "id": "GCEW-EV",
       "agency": "DOL01",
       "title": "NYSDOL OJET GCEW-EV",
@@ -301,6 +301,22 @@
       "awardDate": "05/11/2026",
       "questionsDue": "05/15/2026",
       "conference": "An Applicant Workshop will be held virtually on May 4, 2026, from 10:30 AM -12:00 PM to answer prospective questions.",
+      "loi": "",
+      "source": "NYS"
+    },
+    {
+      "id": "EVT0000012",
+      "agency": "OAS01",
+      "title": "RFA ATL-26019 - PMHAG",
+      "status": "Advertised Only - Not in SFS",
+      "eligibility": "Governmental Entity, Not-For-Profit",
+      "dueDate": "01/06/2027 4:00PM EST",
+      "link": "https://www.nyscr.ny.gov/Ads/MyAds?GovernmentId=999&AssigneeId=7d91bc2c-62fc-4261-8e21-c60decb073d7&Status=Open",
+      "serviceArea": "Government Supports, Health Services",
+      "award": "$15,000,000",
+      "awardDate": "02/18/2027",
+      "questionsDue": "11/25/2026",
+      "conference": "Prevention & Mitigation of Harms Associated with Gambling",
       "loi": "",
       "source": "NYS"
     },
@@ -385,6 +401,6 @@
       "source": "NYS"
     }
   ],
-  "fetched": "2026-11-02T18:15:01.046Z",
-  "count": 24
+  "fetched": "2026-11-05T16:28:57.588Z",
+  "count": 25
 }
