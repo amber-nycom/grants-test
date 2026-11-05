@@ -6,4 +6,4 @@ window.NYCOM_CONFIG = {
 
   // Published CSV link for the Other Grants tab (leave '' until you've published that tab)
   OTHER_GRANTS_CSV_URL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTouTYseUvmlQGedoRwBCje0o2ESEM5HIzIK-QWLuFCKY_kMSgaj4wcK9WLFHbrVDuoeidIMvwTR54l/pub?gid=637772360&single=true&output=csv',
-  SHOW_OTHER_RESOURCES: false,};
+  SHOW_OTHER_GRANTS: false,};
