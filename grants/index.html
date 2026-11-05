@@ -1689,13 +1689,26 @@ async function loadGrantData() {
   }
 }
 
+// Fallback data. The scrapers save the JSON files in the repo's main folder, which is not always the folder this page
+// sits in (a test site keeps the dashboard in /grants/), so look next to the page first and then one folder up.
+async function fetchJsonFile(name){
+  for (const base of ['./', '../']) {
+    try { const r = await fetch(base + name + '?_=' + Date.now()); if (r.ok) return await r.json(); } catch (e) { /* try the next folder */ }
+  }
+  console.log(name + ' not found next to the page or one folder up');
+  return null;
+}
 async function fetchNYSGrants(){
-  try{const r=await fetch('./nys-grants.json?_='+Date.now());if(!r.ok)return;const d=await r.json();const all=d.grants||[];state.jsonManualGrants=all.filter(g=>g.manual===true);state.nysGrants=all.filter(g=>g.manual!==true);buildAgencyFilter();renderGrants();}
-  catch(e){console.log('NYS grants not available:',e.message);}
+  const d = await fetchJsonFile('nys-grants.json'); if (!d) return;
+  const all = d.grants || [];
+  state.jsonManualGrants = all.filter(g => g.manual === true);
+  state.nysGrants = all.filter(g => g.manual !== true);
+  buildAgencyFilter(); renderGrants();
 }
 async function fetchAgencyGrants(){
-  try{const r=await fetch('./agency-grants.json?_='+Date.now());if(!r.ok)return;const d=await r.json();state.agencyGrants=d.grants||[];buildAgencyFilter();renderGrants();}
-  catch(e){console.log('Agency grants not available:',e.message);}
+  const d = await fetchJsonFile('agency-grants.json'); if (!d) return;
+  state.agencyGrants = d.grants || [];
+  buildAgencyFilter(); renderGrants();
 }
 
 document.getElementById('keyword-input').addEventListener('keydown',e=>{
