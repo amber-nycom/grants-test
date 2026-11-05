@@ -265,6 +265,12 @@
         </select>
       </div>
       <div class="filter-group">
+        <h4>Category</h4>
+        <select class="select-filter" id="filter-category">
+          <option value="">All categories</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <h4>Status</h4>
         <div class="filter-item"><input type="checkbox" id="s-posted" checked><label for="s-posted">Posted / Open</label></div>
         <div class="filter-item"><input type="checkbox" id="s-closed"><label for="s-closed">Closed</label></div>
@@ -289,6 +295,9 @@
         <button class="mobile-filter-btn" onclick="mobileStatus('closed',this)">Closed</button>
         <select class="mobile-cat-select" id="mobile-filter-agency" onchange="mobileAgency(this.value)">
           <option value="">All agencies</option>
+        </select>
+        <select class="mobile-cat-select" id="mobile-filter-category" onchange="mobileCategory(this.value)">
+          <option value="">All categories</option>
         </select>
       </div>
       <div class="toolbar"><span id="active-tags"></span></div>
@@ -700,7 +709,7 @@ const PAGE_SIZE = 12;
 const FED_PAGE_SIZE = 100;
 
 let state = {
-  keyword:'', category:'', agency:'', eligibility:'02',
+  keyword:'', category:'', cat:'', agency:'', eligibility:'02',
   statuses:['posted'], sort:'closeDate|asc',
   page:0, totalHits:0, grants:[], nysGrants:[], saved:new Set(), loading:false,
   manualGrants: JSON.parse(localStorage.getItem('manualGrants')||'[]'),
@@ -819,6 +828,20 @@ function buildAgencyFilter() {
     sel.innerHTML = opts;
     if (cur) sel.value = cur;
   });
+  buildCategoryFilter();
+}
+// State-tab Category dropdown. A grant's categories live in one cell ("Education Supports, Family Supports"),
+// so a grant matches when ANY of its categories equals the one picked.
+const grantAreas = g => (g.serviceArea || '').split(',').map(x => x.trim()).filter(Boolean);
+const matchesArea = (g, cat) => !cat || grantAreas(g).some(a => a.toLowerCase() === cat.toLowerCase());
+function buildCategoryFilter() {
+  const set = new Set();
+  [...(state.nysGrants || []), ...(state.agencyGrants || [])].forEach(g => grantAreas(g).forEach(a => set.add(a)));
+  const opts = '<option value="">All categories</option>' + [...set].sort((a, b) => a.localeCompare(b)).map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  ['filter-category', 'mobile-filter-category'].forEach(id => {
+    const sel = document.getElementById(id); if (!sel) return;
+    const cur = sel.value; sel.innerHTML = opts; if (cur && set.has(cur)) sel.value = cur;
+  });
 }
 function filterNYSByAgency(grants, agency) {
   if (!agency) return grants;
@@ -936,6 +959,7 @@ function applyFilters() {
   state.keyword = '';
   state.category = '';
   state.agency = document.getElementById('filter-agency').value;
+  state.cat = (document.getElementById('filter-category') || {}).value || '';
   state.eligibility = document.getElementById('filter-eligibility').value;
   state.sort = document.getElementById('filter-sort').value;
   state.statuses = [];
@@ -1145,10 +1169,11 @@ function isAgencyGrantClosed(g) {
 
 function renderGrants() {
   const grid = document.getElementById('grants-grid');
-  const filteredNYS = filterNYSByAgency(filterNYSByCategory(state.nysGrants, state.category), state.agency);
+  const filteredNYS = filterNYSByAgency((state.nysGrants||[]).filter(g => matchesArea(g, state.cat)), state.agency);
+  const agencyInCat = (state.agencyGrants||[]).filter(g => matchesArea(g, state.cat));
   const allManual = [...(state.jsonManualGrants||[]), ...state.manualGrants];
   const hasManual = allManual.length > 0;
-  const hasAnything = filteredNYS.length > 0 || hasManual || (state.agencyGrants||[]).length > 0;
+  const hasAnything = filteredNYS.length > 0 || hasManual || agencyInCat.length > 0;
   if (!hasAnything && !state.loading) {
     grid.innerHTML=`<div class="empty-state"><div style="font-size:28px;">🔍</div><div style="font-size:13px;color:var(--text-mid);">No grants found.</div></div>`;
     return;
@@ -1163,7 +1188,7 @@ function renderGrants() {
 
   const norm25 = s => (s||'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,25);
 
-  const agencyVisible = (state.agencyGrants||[]).filter(g => {
+  const agencyVisible = agencyInCat.filter(g => {
     if (state.agency) {
       const reverseMap = Object.fromEntries(Object.entries(SOURCE_TO_AGENCY).map(([src,code])=>[code,src]));
       const sourceEquiv = reverseMap[state.agency] || state.agency;
@@ -1649,6 +1674,10 @@ function mobileStatus(status, btn) {
   document.querySelectorAll('#mobile-filter-bar .mobile-filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   state.statuses = status === 'closed' ? ['closed'] : ['posted'];
+  renderGrants();
+}
+function mobileCategory(cat) {
+  state.cat = cat;
   renderGrants();
 }
 function mobileAgency(agency) {
