@@ -314,6 +314,12 @@
   <div class="layout">
     <aside class="sidebar">
       <div class="filter-group">
+        <h4>Agency</h4>
+        <select class="select-filter" id="fed-filter-agency">
+          <option value="">All agencies</option><option value="USDA">Agriculture (USDA)</option><option value="DOC">Commerce (DOC)</option><option value="DOE">Energy (DOE)</option><option value="ED">Education (ED)</option><option value="EPA">Environmental Protection (EPA)</option><option value="DHS">Homeland Security / FEMA (DHS)</option><option value="HUD">Housing &amp; Urban Development (HUD)</option><option value="DOI">Interior (DOI)</option><option value="DOJ">Justice (DOJ)</option><option value="DOL">Labor (DOL)</option><option value="DOT">Transportation (DOT)</option><option value="VA">Veterans Affairs (VA)</option><option value="SBA">Small Business Administration (SBA)</option><option value="IMLS">Museum &amp; Library Services (IMLS)</option><option value="NEA">Arts (NEA)</option><option value="NEH">Humanities (NEH)</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <h4>Category</h4>
         <select class="select-filter" id="fed-filter-category">
           <option value="">All categories</option>
@@ -358,6 +364,9 @@
         <button class="mobile-filter-btn active" onclick="mobileFedStatus('posted',this)">Open</button>
         <button class="mobile-filter-btn" onclick="mobileFedStatus('forecasted',this)">Forecasted</button>
         <button class="mobile-filter-btn" onclick="mobileFedStatus('closed',this)">Closed</button>
+        <select class="mobile-cat-select" id="mobile-fed-agency" onchange="mobileFedAgency(this.value)">
+          <option value="">All agencies</option><option value="USDA">Agriculture (USDA)</option><option value="DOC">Commerce (DOC)</option><option value="DOE">Energy (DOE)</option><option value="ED">Education (ED)</option><option value="EPA">Environmental Protection (EPA)</option><option value="DHS">Homeland Security / FEMA (DHS)</option><option value="HUD">Housing &amp; Urban Development (HUD)</option><option value="DOI">Interior (DOI)</option><option value="DOJ">Justice (DOJ)</option><option value="DOL">Labor (DOL)</option><option value="DOT">Transportation (DOT)</option><option value="VA">Veterans Affairs (VA)</option><option value="SBA">Small Business Administration (SBA)</option><option value="IMLS">Museum &amp; Library Services (IMLS)</option><option value="NEA">Arts (NEA)</option><option value="NEH">Humanities (NEH)</option>
+        </select>
         <select class="mobile-cat-select" onchange="mobileFedCategory(this.value)">
           <option value="">All categories</option>
           <option value="AG">Agriculture</option>
@@ -716,7 +725,7 @@ let state = {
   jsonManualGrants: [], agencyGrants: [],
 };
 let fed = {
-  keyword:'', category:'', eligibility:'02',
+  keyword:'', category:'', agency:'', eligibility:'02',
   statuses:['posted'], sort:'closeDate|asc',
   page:0, totalHits:0, grants:[], loading:false, loaded:false,
 };
@@ -862,6 +871,7 @@ async function fetchFedGrants(append) {
   const body = { rows:FED_PAGE_SIZE, startRecordNum:fed.page*FED_PAGE_SIZE, oppStatuses:fed.statuses.join('|')||'posted', sortBy:`${sb}|${sd}` };
   if (fed.keyword) body.keyword = fed.keyword;
   if (fed.category) body.fundingCategories = fed.category;
+  if (fed.agency) body.agencies = fed.agency;   // Grants.gov agency code; matches the agency and its sub-offices
   if (fed.eligibility) body.eligibilities = fed.eligibility;
   try {
     const r = await fetch(GRANTS_API, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
@@ -884,6 +894,7 @@ async function fetchFedGrants(append) {
 function applyFedFilters() {
   fed.keyword = document.getElementById('keyword-input').value.trim();
   fed.category = document.getElementById('fed-filter-category').value;
+  fed.agency = document.getElementById('fed-filter-agency').value;
   fed.eligibility = document.getElementById('fed-filter-eligibility').value;
   fed.sort = document.getElementById('fed-filter-sort').value;
   fed.statuses = [];
@@ -914,6 +925,7 @@ function renderFedGrants() {
   const tags = [];
   if (fed.keyword) tags.push(`keyword: "${fed.keyword}"`);
   if (fed.category) tags.push(`category: ${CAT[fed.category]||fed.category}`);
+  if (fed.agency) tags.push(`agency: ${fed.agency}`);
   document.getElementById('fed-active-tags').innerHTML = tags.map(t=>`<span class="active-tag">${t}</span>`).join('');
 }
 
@@ -1683,6 +1695,10 @@ function mobileCategory(cat) {
 function mobileAgency(agency) {
   state.agency = agency;
   renderGrants();
+}
+function mobileFedAgency(agency) {
+  fed.agency = agency;
+  fed.page = 0; fed.grants = []; fetchFedGrants();
 }
 function mobileFedCategory(category) {
   fed.category = category;
