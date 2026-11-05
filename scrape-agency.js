@@ -36,6 +36,8 @@ async function checkGrantStatus(browserPage, url) {
         /(?:deadline|due date|applications? due|close[sd]?|submit by|apply by)[^\n]{0,60}((?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s+\d{4})/i,
         /(?:deadline|due date|applications? due|close[sd]?|submit by|apply by)[^\n]{0,30}(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/i,
         /((?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s+\d{4})(?:[^\n]{0,40}deadline|[^\n]{0,40}due|[^\n]{0,40}close)/i,
+      // Fallback: abbreviated month and/or no year, e.g. "Applications are due by 4 p.m. on Jan. 29."
+        /(?:deadline|due date|due by|due on|applications? (?:are )?due|submit by|apply by|close[sd]?)[^\n]{0,80}?\b((?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?!\d)(?:st|nd|rd|th)?(?:,?\s*\d{4})?)/i,
       ];
       for (const re of deadlinePatterns) {
         const m = rawText.match(re);
@@ -93,6 +95,7 @@ async function checkGrantStatus(browserPage, url) {
       return { status, dueDate };
     });
 
+    result.dueDate = normalizeDeadline(result.dueDate);   // "Jan. 29" -> "January 29" (no year guessed)
     console.log('  [' + url.split('/').pop() + '] status=' + result.status + (result.dueDate ? ' due=' + result.dueDate : ''));
     return result;
   } catch(e) {
