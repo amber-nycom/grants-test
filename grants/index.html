@@ -1762,6 +1762,7 @@ const OG_TYPE_COLORS = {
   'Local & Regional Authorities':'background:#0f766e;color:#fff;', // teal
   'Other':'background:#64748b;color:#fff;',                        // slate
 };
+const ogCanonType = t => OG_TYPE_ORDER.find(x => x.toLowerCase() === (t||'').trim().toLowerCase()) || (t||'').trim() || 'Other';
 const ogIndex = [];
 let ogAll = [], ogLoaded = false;
 const og = { type: '', region: '', statuses: ['posted'], sort: 'closeDate|asc' };
