@@ -1755,11 +1755,12 @@ function mobileFedStatus(status, btn) {
 // Everything here is typed by hand into the "Other Grants" tab of the sheet. Publish THAT tab as CSV
 // (File > Share > Publish to web) and put its link in config.js. Empty = the tab shows a short notice.
 const OTHER_GRANTS_CSV_URL = (window.NYCOM_CONFIG || {}).OTHER_GRANTS_CSV_URL || '';   // set in config.js
-const OG_TYPE_ORDER = ['Regional', 'Nonprofit', 'Private foundation', 'Corporate', 'Commission', 'Other'];
+const OG_TYPE_ORDER = ['Foundations and Nonprofit', 'Corporate', 'Local & Regional Authorities', 'Other'];
 const OG_TYPE_COLORS = {
-  'Regional':'background:#0f766e;color:#fff;', 'Nonprofit':'background:#6d28d9;color:#fff;',
-  'Private foundation':'background:#b45309;color:#fff;', 'Corporate':'background:#334155;color:#fff;',
-  'Commission':'background:#9d174d;color:#fff;',
+  'Foundations and Nonprofit':'background:#6d28d9;color:#fff;',   // purple
+  'Corporate':'background:#b45309;color:#fff;',                    // amber
+  'Local & Regional Authorities':'background:#0f766e;color:#fff;', // teal
+  'Other':'background:#64748b;color:#fff;',                        // slate
 };
 const ogIndex = [];
 let ogAll = [], ogLoaded = false;
